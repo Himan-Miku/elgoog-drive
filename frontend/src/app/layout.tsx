@@ -1,8 +1,9 @@
 import "./globals.scss";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Button from "../components/Button";
 import "../scss/HomePage.scss";
+import Navbar from "@/components/Navbar";
+import Sidebar from "@/components/Sidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,11 +22,10 @@ export default function RootLayout({
       <body className={`bg-custom-backg ${inter.className}`}>
         <div className="wrapper">
           <div className="sidebar">
-            <h1>Sidebar</h1>
-            <Button />
+            <Sidebar />
           </div>
           <div className="navbar">
-            <h1>Your Daughter Navbar</h1>
+            <Navbar />
           </div>
           <div className="content">{children}</div>
         </div>
