@@ -1,0 +1,44 @@
+.wrapper {
+    display: grid;
+    position: relative;
+    height: 100dvh;
+    background-color: chartreuse;
+    grid-template-columns: 16rem auto;
+    grid-template-rows: 4rem auto;
+    grid-template-areas: "sidebar navbar"
+        "sidebar content";
+
+    .navbar {
+        grid-area: navbar;
+        background-color: aqua;
+    }
+
+    .content {
+        grid-area: content;
+        background-color: brown;
+    }
+
+    .sidebar {
+        grid-area: sidebar;
+        background-color: coral;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .wrapper {
+        grid-template-columns: auto;
+        grid-template-rows: 3rem auto;
+        grid-template-areas: "navbar"
+            "content";
+    }
+
+    .sidebar {
+        position: absolute;
+        top: 0;
+        height: 100dvh;
+    }
+
+    .display-none {
+        display: none;
+    }
+}
