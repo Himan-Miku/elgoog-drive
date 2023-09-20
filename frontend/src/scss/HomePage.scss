@@ -2,7 +2,6 @@
     display: grid;
     position: relative;
     height: 100dvh;
-    background-color: chartreuse;
     grid-template-columns: 16rem auto;
     grid-template-rows: 4rem auto;
     grid-template-areas: "sidebar navbar"
@@ -10,17 +9,14 @@
 
     .navbar {
         grid-area: navbar;
-        background-color: aqua;
     }
 
     .content {
         grid-area: content;
-        background-color: brown;
     }
 
     .sidebar {
         grid-area: sidebar;
-        background-color: coral;
     }
 }
 
