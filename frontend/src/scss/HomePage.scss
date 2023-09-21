@@ -5,7 +5,7 @@
     position: relative;
     height: 100dvh;
     grid-template-columns: 16rem auto;
-    grid-template-rows: 4rem auto;
+    grid-template-rows: 5rem auto;
     grid-template-areas: "sidebar navbar"
         "sidebar content";
 
@@ -16,6 +16,8 @@
 
     .content {
         grid-area: content;
+        border-radius: 1.5rem;
+        background-color: $main-bg;
     }
 
     .sidebar {
