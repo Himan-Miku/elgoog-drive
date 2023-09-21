@@ -12,9 +12,12 @@ const SidebarItems = () => {
         <div
           key={item.title}
           role="button"
-          className={clsx("py-2 pl-5 flex gap-4 items-center rounded-3xl", {
-            "bg-custom-blue": pathname === item.path,
-          })}
+          className={clsx(
+            "py-2 pl-5 flex gap-4 items-center rounded-3xl hover:bg-custom-backg",
+            {
+              "bg-custom-blue hover:bg-custom-blue": pathname === item.path,
+            }
+          )}
         >
           <div>
             <svg width={24} height={24} viewBox="0 0 24 24" fill="#e6e6e6">
