@@ -29,7 +29,7 @@
 @media screen and (max-width: 600px) {
     .wrapper {
         grid-template-columns: auto;
-        grid-template-rows: 3rem auto;
+        grid-template-rows: 4rem auto;
         grid-template-areas: "navbar"
             "content";
     }
@@ -37,6 +37,18 @@
     .sidebar {
         position: absolute;
         top: 0;
+        display: none;
+    }
+
+    .navbar {
+        grid-area: navbar;
+        background-color: $nav-side-bar;
+    }
+
+    .content {
+        grid-area: content;
+        border-radius: 1.5rem;
+        background-color: $main-bg;
     }
 
     .display-none {
