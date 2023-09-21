@@ -19,7 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`bg-custom-backg ${inter.className}`}>
+      <body className={`bg-custom-nav ${inter.className}`}>
         <div className="wrapper">
           <div className="sidebar">
             <Sidebar />
