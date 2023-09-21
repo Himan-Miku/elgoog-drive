@@ -4,7 +4,7 @@ import SidebarItems from "./SidebarItems";
 
 const Sidebar = () => {
   return (
-    <div className="flex flex-col gap-4 p-3">
+    <div className="flex flex-col gap-4 px-3 py-2">
       <div className="flex justify-start items-center gap-2">
         <Image
           src={"/Drive-logo-removebg.png"}
