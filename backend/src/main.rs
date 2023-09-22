@@ -66,6 +66,9 @@ async fn main() -> Result<(), std::io::Error> {
     let client = Client::new(&shared_config);
 
     show_objects(&client, "elgoog-drive").await.unwrap();
+    get_object_uri(&client, "elgoog-drive", "Google-Drive-logo.png", 60)
+        .await
+        .unwrap();
 
     HttpServer::new(|| App::new().service(hello).service(json_res).service(up_shit))
         .bind("127.0.0.1:8000")?
