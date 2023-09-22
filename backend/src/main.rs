@@ -14,6 +14,26 @@ async fn show_objects(client: &Client, bucket: &str) -> Result<(), Error> {
     Ok(())
 }
 
+async fn get_object_uri(
+    client: &Client,
+    bucket: &str,
+    object_key: &str,
+    expires_in: u64,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let expiry_time = Duration::from_secs(expires_in);
+
+    let presigned_request = client
+        .get_object()
+        .bucket(bucket)
+        .key(object_key)
+        .presigned(PresigningConfig::expires_in(expiry_time)?)
+        .await?;
+
+    println!("Object URI : {}", presigned_request.uri());
+
+    Ok(())
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 struct Intro {
     name: String,
