@@ -1,5 +1,18 @@
+use std::time::Duration;
+
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use aws_sdk_s3::{presigning::PresigningConfig, Client, Error};
 use serde::{Deserialize, Serialize};
+
+async fn show_objects(client: &Client, bucket: &str) -> Result<(), Error> {
+    let objects = client.list_objects_v2().bucket(bucket).send().await?;
+    println!("Objects are : ");
+    for obj in objects.contents().unwrap_or_default() {
+        println!("{:?}", obj.key().unwrap());
+    }
+
+    Ok(())
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Intro {
@@ -29,6 +42,11 @@ async fn up_shit(intro: web::Json<Intro>) -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> Result<(), std::io::Error> {
+    let shared_config = aws_config::load_from_env().await;
+    let client = Client::new(&shared_config);
+
+    show_objects(&client, "elgoog-drive").await.unwrap();
+
     HttpServer::new(|| App::new().service(hello).service(json_res).service(up_shit))
         .bind("127.0.0.1:8000")?
         .run()
