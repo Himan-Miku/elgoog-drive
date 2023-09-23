@@ -18,6 +18,11 @@ struct FolderName {
     folder_name: String,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+struct FoldersArray {
+    folders_vec: Vec<String>,
+}
+
 #[get("/api/hello")]
 async fn hello() -> impl Responder {
     HttpResponse::Ok().body("Hello World")
@@ -39,7 +44,17 @@ async fn up_shit(intro: web::Json<Intro>) -> impl Responder {
 }
 
 #[get("/api/fetchFolders")]
-async fn fetch_folders() -> impl Responder {}
+async fn fetch_folders() -> impl Responder {
+    let shared_config = aws_config::load_from_env().await;
+    let client = Client::new(&shared_config);
+    let folders = show_folders(&client, "elgoog-drive").await.unwrap();
+
+    let folders_array = FoldersArray {
+        folders_vec: folders,
+    };
+
+    HttpResponse::Ok().json(folders_array)
+}
 
 #[post("/api/createFolder")]
 async fn create_folder(folder_name: web::Json<FolderName>) -> impl Responder {
@@ -62,10 +77,7 @@ async fn create_folder(folder_name: web::Json<FolderName>) -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let shared_config = aws_config::load_from_env().await;
-    let client = Client::new(&shared_config);
-
-    show_folders(&client, "elgoog-drive").await.unwrap();
+    // show_folders(&client, "elgoog-drive").await.unwrap();
     // get_object_uri(&client, "elgoog-drive", "Google-Drive-logo.png", 60)
     //     .await
     //     .unwrap();
