@@ -14,13 +14,9 @@ const config: Config = {
         "custom-blue": "#3F4BD1",
         "custom-green": "#48C78E",
       },
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-      },
     },
   },
-  plugins: [],
+  plugins: [require("daisyui")],
 };
+
 export default config;
