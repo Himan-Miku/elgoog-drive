@@ -96,7 +96,7 @@ async fn main() -> std::io::Result<()> {
             .service(create_folder)
             .service(fetch_folders)
     })
-    .bind("127.0.0.1:8000")?
+    .bind("localhost:8000")?
     .run()
     .await
 }
