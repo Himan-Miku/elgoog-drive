@@ -2,7 +2,7 @@ use actix_cors::Cors;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use aws_sdk_s3::Client;
 use serde::{Deserialize, Serialize};
-use utils::s3::{create_folder_for_s3, show_objects};
+use utils::s3::{create_folder_for_s3, show_folders};
 
 mod api;
 mod utils;
@@ -66,7 +66,7 @@ async fn main() -> std::io::Result<()> {
     let shared_config = aws_config::load_from_env().await;
     let client = Client::new(&shared_config);
 
-    show_objects(&client, "elgoog-drive").await.unwrap();
+    show_folders(&client, "elgoog-drive").await.unwrap();
     // get_object_uri(&client, "elgoog-drive", "Google-Drive-logo.png", 60)
     //     .await
     //     .unwrap();
