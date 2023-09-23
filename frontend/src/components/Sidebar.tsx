@@ -11,6 +11,7 @@ const Sidebar = () => {
           alt={"Drive Logo"}
           width={64}
           height={64}
+          priority
         />
         <div className="text-xl font-medium text-custom-green">
           <h3>

@@ -2,7 +2,7 @@ import Image from "next/image";
 
 const Navbar = () => {
   return (
-    <div className="flex justify-between items-center py-3 md:px-14 h-full">
+    <div className="flex justify-between w-full items-center py-3 md:px-14 h-full">
       <div className="flex gap-3 min-w-fit md:w-[35rem] bg-custom-backg rounded-3xl px-3 py-1">
         <div className="rounded-full min-w-fit p-2 group hover:bg-custom-nav">
           <svg

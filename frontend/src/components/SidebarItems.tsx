@@ -7,7 +7,7 @@ const SidebarItems = () => {
   const pathname = usePathname();
 
   return (
-    <div className="flex flex-col gap-1 py-3 px-1">
+    <div className="flex flex-col gap-1 py-3 px-2">
       {Sidebaritems.map((item) => (
         <div
           key={item.title}
