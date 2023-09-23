@@ -4,7 +4,6 @@ use aws_sdk_s3::Client;
 use serde::{Deserialize, Serialize};
 use utils::s3::{create_folder_for_s3, show_folders};
 
-mod api;
 mod utils;
 
 #[derive(Debug, Serialize, Deserialize)]
