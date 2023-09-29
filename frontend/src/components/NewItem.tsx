@@ -1,6 +1,7 @@
 "use client";
 
 import { FolderNameStore } from "@/context/FolderNameContext";
+import { useSession } from "next-auth/react";
 import { AiOutlinePlus } from "react-icons/ai";
 import {
   MdOutlineUploadFile,
@@ -9,6 +10,7 @@ import {
 
 const NewItem = () => {
   const { folName, setFolName } = FolderNameStore();
+  const { data: session, status } = useSession();
 
   return (
     <>
@@ -38,6 +40,7 @@ const NewItem = () => {
                       name: file.name,
                       contentType: file.type,
                       size: file.size,
+                      user: session?.user?.name,
                     };
 
                     try {
