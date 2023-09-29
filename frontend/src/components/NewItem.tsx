@@ -32,25 +32,54 @@ const NewItem = () => {
                   if (e.target.files && e.target.files.length > 0) {
                     console.log(e.target.files[0]);
 
+                    let file = e.target.files[0];
+
+                    const metadata = {
+                      name: file.name,
+                      contentType: file.type,
+                      size: file.size,
+                    };
+
                     try {
                       const response = await fetch(
-                        "https://elgoog-drive.s3.ap-south-1.amazonaws.com/images/h.png?x-id=PutObject&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQ6SEYNL67JF6M66T%2F20230922%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20230922T193452Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=content-type%3Bhost&X-Amz-Signature=6601c3a57bcc0a02334c5cee365b0d3cc3f636809d8177e958c5892f012f655f",
+                        "http://localhost:8000/api/getMetadata",
                         {
-                          method: "PUT",
+                          method: "POST",
                           headers: {
-                            "Content-Type": "image/png",
+                            "Content-Type": "application/json",
                           },
-                          body: e.target.files[0],
+                          body: JSON.stringify(metadata),
                         }
                       );
 
                       if (response.ok) {
-                        alert("File uploaded successfully!");
+                        console.log("Metadata sent successfully");
+                        const uri_data = await response.json();
+                        console.log(uri_data);
+                        try {
+                          const response = await fetch(uri_data, {
+                            method: "PUT",
+                            headers: {
+                              "Content-Type": metadata.contentType,
+                            },
+                            body: e.target.files[0],
+                          });
+
+                          if (response.ok) {
+                            alert("File uploaded successfully!");
+                          } else {
+                            alert("Error uploading file.");
+                          }
+                        } catch (error) {
+                          console.error("An error occurred:", error);
+                        }
                       } else {
-                        alert("Error uploading file.");
+                        console.log(
+                          `Metadata response error ${response.status}`
+                        );
                       }
                     } catch (error) {
-                      console.error("An error occurred:", error);
+                      console.log("An error occured while sending metadata");
                     }
                   }
                 }}
