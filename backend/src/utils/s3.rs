@@ -46,7 +46,7 @@ pub async fn put_object_uri(
     object_key: &str,
     content_type: &str,
     expires_in: u64,
-) -> Result<(), Box<dyn std::error::Error>> {
+) -> Result<String, Box<dyn std::error::Error>> {
     let expiry_time = Duration::from_secs(expires_in);
 
     let presigned_request = client
@@ -59,7 +59,7 @@ pub async fn put_object_uri(
 
     println!("Put Object URI : {}", presigned_request.uri());
 
-    Ok(())
+    Ok(presigned_request.uri().to_string())
 }
 
 pub async fn create_folder_for_s3(
