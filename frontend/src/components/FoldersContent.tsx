@@ -1,34 +1,32 @@
-type foldersData = {
-  folders_vec: Array<string>;
-};
+import { foldersData } from "./Folders";
+import { FaFolder } from "react-icons/fa6";
+import { SlOptionsVertical } from "react-icons/sl";
 
-const fetchFolders = async () => {
-  try {
-    const res = await fetch("http://localhost:8000/api/fetchFolders");
-    if (res.ok) {
-      const data = (await res.json()) as foldersData;
-      console.log(data);
-      return data;
-    } else {
-      console.error("Fetch failed with status:", res.status);
-      throw new Error("Fetch failed");
-    }
-  } catch (error) {
-    console.error("Fetch error:", error);
-    throw error;
-  }
-};
-
-export default async function FoldersContent() {
-  const data = await fetchFolders();
-
-  console.log("data from fn : ", data);
-
-  return (
-    <div>
-      {data.folders_vec?.map((folName, index) => {
-        return <h1 key={index}>{folName}</h1>;
-      })}
-    </div>
-  );
+interface FoldersContentProps {
+  data: foldersData;
 }
+
+const FoldersContent = ({ data }: FoldersContentProps) => {
+  return (
+    <>
+      {data.folders_vec?.map((folName, index) => {
+        return (
+          <div
+            className="flex gap-6 items-center py-3 px-4 hover:bg-custom-nav bg-custom-nav min-w-fit rounded-xl"
+            key={index}
+          >
+            <div className="flex gap-2 items-center">
+              <FaFolder />
+              <h3>{folName.replace(/\/$/, "")}</h3>
+            </div>
+            <div className="rounded-full p-1 hover:bg-custom-backg">
+              <SlOptionsVertical />
+            </div>
+          </div>
+        );
+      })}
+    </>
+  );
+};
+
+export default FoldersContent;
