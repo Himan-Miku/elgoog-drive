@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use structs::structs::{FolderName, FoldersArray, Metadata};
-use utils::s3::{create_folder_for_s3, put_object_uri, show_folders};
+use utils::s3::{create_folder_for_s3, list_all_objects, put_object_uri, show_folders};
 
 mod structs;
 mod utils;
@@ -30,15 +30,38 @@ async fn json_res() -> impl Responder {
     HttpResponse::Ok().json(res)
 }
 
+#[get("/api/getObjects")]
+async fn get_objects() -> impl Responder {
+    let shared_config = aws_config::load_from_env().await;
+    let client = Client::new(&shared_config);
+    let obj_vec = list_all_objects(&client, "elgoog-drive").await.unwrap();
+    HttpResponse::Ok().json(obj_vec)
+}
+
 #[post("/api/getMetadata")]
 async fn get_metadata(metadata: web::Json<Metadata>) -> impl Responder {
     let shared_config = aws_config::load_from_env().await;
     let client = Client::new(&shared_config);
     let Metadata {
-        name, content_type, ..
+        name,
+        content_type,
+        user,
+        ..
     } = metadata.into_inner();
-    let new_uuid = Uuid::new_v4().to_string();
-    let formated_string = format!("{}{}", name, new_uuid);
+    let actual_name = name.split('.').collect::<Vec<&str>>();
+    let new_uuid = Uuid::new_v4()
+        .to_string()
+        .chars()
+        .take(6)
+        .collect::<String>();
+    let user_name = user.split(" ").collect::<Vec<&str>>();
+    let formated_string = format!(
+        "{}/{}-{}.{}",
+        user_name.first().unwrap(),
+        actual_name.first().unwrap(),
+        new_uuid,
+        actual_name.last().unwrap()
+    );
     let obj_key = formated_string.as_str();
     let presigned_put_uri =
         put_object_uri(&client, "elgoog-drive", obj_key, content_type.as_str(), 60)
@@ -107,6 +130,7 @@ async fn main() -> std::io::Result<()> {
             .service(create_folder)
             .service(fetch_folders)
             .service(get_metadata)
+            .service(get_objects)
     })
     .bind("localhost:8000")?
     .run()
