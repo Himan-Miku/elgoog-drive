@@ -2,25 +2,18 @@ use actix_cors::Cors;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use aws_sdk_s3::Client;
 use serde::{Deserialize, Serialize};
-use utils::s3::{create_folder_for_s3, show_folders};
+use uuid::Uuid;
 
+use structs::structs::{FolderName, FoldersArray, Metadata};
+use utils::s3::{create_folder_for_s3, put_object_uri, show_folders};
+
+mod structs;
 mod utils;
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Intro {
     name: String,
     number: i32,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct FolderName {
-    #[serde(rename = "folderName")]
-    folder_name: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct FoldersArray {
-    folders_vec: Vec<String>,
 }
 
 #[get("/api/hello")]
@@ -35,6 +28,24 @@ async fn json_res() -> impl Responder {
         number: 7,
     };
     HttpResponse::Ok().json(res)
+}
+
+#[post("/api/getMetadata")]
+async fn get_metadata(metadata: web::Json<Metadata>) -> impl Responder {
+    let shared_config = aws_config::load_from_env().await;
+    let client = Client::new(&shared_config);
+    let Metadata {
+        name, content_type, ..
+    } = metadata.into_inner();
+    let new_uuid = Uuid::new_v4().to_string();
+    let formated_string = format!("{}{}", name, new_uuid);
+    let obj_key = formated_string.as_str();
+    let presigned_put_uri =
+        put_object_uri(&client, "elgoog-drive", obj_key, content_type.as_str(), 60)
+            .await
+            .unwrap();
+
+    HttpResponse::Created().json(presigned_put_uri)
 }
 
 #[post("/api/up")]
@@ -95,6 +106,7 @@ async fn main() -> std::io::Result<()> {
             .service(up_shit)
             .service(create_folder)
             .service(fetch_folders)
+            .service(get_metadata)
     })
     .bind("localhost:8000")?
     .run()
