@@ -20,6 +20,16 @@ pub async fn show_folders(client: &Client, bucket: &str) -> Result<Vec<String>, 
     Ok(folders)
 }
 
+pub async fn list_all_objects(client: &Client, bucket: &str) -> Result<(), Error> {
+    let objects = client.list_objects_v2().bucket(bucket).send().await?;
+
+    for obj in objects.contents().unwrap_or_default() {
+        println!("{}", obj.key().unwrap_or_default());
+    }
+
+    Ok(())
+}
+
 pub async fn get_object_uri(
     client: &Client,
     bucket: &str,
