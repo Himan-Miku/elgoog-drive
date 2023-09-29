@@ -6,6 +6,7 @@ pub struct Metadata {
     pub name: String,
     pub content_type: String,
     pub size: u32,
+    pub user: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
