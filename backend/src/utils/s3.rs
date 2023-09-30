@@ -15,20 +15,27 @@ pub async fn show_folders(client: &Client, bucket: &str) -> Result<Vec<String>, 
         let folder_name = obj.prefix().unwrap();
         folders.push(folder_name.to_owned());
     }
-    println!("{:?}", folders);
+    println!("folders : {:?}", folders);
 
     Ok(folders)
 }
 
-pub async fn list_all_objects(client: &Client, bucket: &str) -> Result<Vec<String>, Error> {
+pub async fn list_all_objects(
+    client: &Client,
+    bucket: &str,
+    user: &String,
+) -> Result<Vec<String>, Error> {
     let mut obj_vec: Vec<String> = Vec::new();
 
     let objects = client.list_objects_v2().bucket(bucket).send().await?;
 
     for obj in objects.contents().unwrap_or_default() {
-        obj_vec.push(obj.key().unwrap_or_default().to_owned());
+        let key = obj.key().unwrap_or_default().to_owned();
+        if key.starts_with(user) {
+            obj_vec.push(key);
+        }
     }
-    println!("{:?}", obj_vec);
+    println!("obj_vec : {:?}", obj_vec);
 
     Ok(obj_vec)
 }
