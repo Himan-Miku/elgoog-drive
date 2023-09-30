@@ -4,7 +4,7 @@ use aws_sdk_s3::Client;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use structs::structs::{FolderName, FoldersArray, Metadata};
+use structs::structs::{FolderName, FoldersArray, GetObjectsParams, Metadata};
 use utils::s3::{create_folder_for_s3, list_all_objects, put_object_uri, show_folders};
 
 mod structs;
@@ -31,10 +31,13 @@ async fn json_res() -> impl Responder {
 }
 
 #[get("/api/getObjects")]
-async fn get_objects() -> impl Responder {
+async fn get_objects(name: web::Query<GetObjectsParams>) -> impl Responder {
+    let user = &name.name;
     let shared_config = aws_config::load_from_env().await;
     let client = Client::new(&shared_config);
-    let obj_vec = list_all_objects(&client, "elgoog-drive").await.unwrap();
+    let obj_vec = list_all_objects(&client, "elgoog-drive", user)
+        .await
+        .unwrap();
     HttpResponse::Ok().json(obj_vec)
 }
 
