@@ -1,8 +1,5 @@
-"use client";
-import { objectNamesStore } from "@/context/ObjectsContext";
-import { useSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
 import Image from "next/image";
-import { useState, useEffect } from "react";
 
 const list_objects = async (name: string) => {
   const res = await fetch(`http://localhost:8000/api/getObjects?name=${name}`, {
@@ -12,22 +9,16 @@ const list_objects = async (name: string) => {
   return data;
 };
 
-const MyDriveContent = () => {
-  const { objectNames, setObjectNames } = objectNamesStore();
-  const { data: session } = useSession();
+const MyDriveContent = async () => {
+  const session = await getServerSession();
   let username = session?.user?.name?.split(" ")[0];
+  const data = await list_objects(username!);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await list_objects(username!);
-      setObjectNames(data);
-    };
-    fetchData();
-  }, [objectNames]);
+  console.log("Data from MyDriveContent : ", data);
 
   return (
     <div className="px-8 py-2 grid grid-cols-5 gap-4">
-      {objectNames?.map((obj, index) => {
+      {data?.map((obj, index) => {
         let imageSrc;
         let smImageSrc;
 
