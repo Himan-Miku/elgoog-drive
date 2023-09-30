@@ -19,3 +19,13 @@ pub struct FolderName {
 pub struct FoldersArray {
     pub folders_vec: Vec<String>,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct UserData {
+    pub username: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GetObjectsParams {
+    pub name: String,
+}
