@@ -35,3 +35,9 @@ pub struct GetObjectsParams {
 pub struct DownloadObj {
     pub obj_key: String,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SentMetadata {
+    pub obj_key: String,
+    pub presigned_put_uri: String,
+}
