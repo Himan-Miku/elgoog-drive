@@ -26,6 +26,10 @@
     }
 }
 
+.one-edge-box-shadow:hover {
+    box-shadow: 0 3px 2px -2px #3F4BD1;
+}
+
 input[type="file"] {
     display: none;
 }
