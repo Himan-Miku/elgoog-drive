@@ -61,7 +61,11 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
         let imageSrc;
         let smImageSrc;
 
-        if (obj.endsWith(".png") || obj.endsWith(".jpeg")) {
+        if (
+          obj.endsWith(".png") ||
+          obj.endsWith(".jpeg") ||
+          obj.endsWith(".svg")
+        ) {
           imageSrc = "/image-lg.png";
           smImageSrc = "/image-sm.png";
         } else if (obj.endsWith(".pdf")) {
@@ -89,7 +93,8 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
         return (
           <div
             key={index}
-            className="w-full bg-custom-nav px-3 pt-2 pb-3 rounded-xl h-52 flex flex-col gap-2 group"
+            className="w-full bg-custom-nav px-3 pt-2 pb-3 rounded-xl h-52 flex flex-col gap-2 group one-edge-box-shadow hover:-translate-y-1 transition-all duration-300 ease-in-out"
+            onDoubleClick={() => downloadObject(obj)}
           >
             <div className="flex gap-2 px-2 py-2 items-center justify-between">
               <Image
@@ -106,7 +111,7 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
                       .substring(0, 14) + "..."
                   : obj.substring(obj.indexOf("/") + 1, obj.length)}
               </h3>
-              <div className="dropdown dropdown-end translate-x-[14.8px]">
+              <div className="dropdown dropdown-end md:translate-x-[14.8px]">
                 <div
                   tabIndex={0}
                   className="p-1 rounded-full hover:bg-custom-backg transition-colors duration-300 ease-in-out"
