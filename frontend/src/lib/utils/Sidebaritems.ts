@@ -18,12 +18,6 @@ const Sidebaritems: SidebarData[] = [
       "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z",
   },
   {
-    title: "Trash",
-    path: "/trash",
-    svgPath:
-      "M15,4V3H9v1H4v2h1v13c0,1.1,0.9,2,2,2h10c1.1,0,2-0.9,2-2V6h1V4H15z M11,17H9V8h2V17z M15,17h-2V8h2V17z",
-  },
-  {
     title: "Storage",
     path: "/storage",
     svgPath:
