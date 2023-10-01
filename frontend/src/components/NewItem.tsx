@@ -8,6 +8,13 @@ import {
   MdOutlineDriveFolderUpload,
 } from "react-icons/md";
 import { useRouter } from "next/navigation";
+import { collectionId, databaseId, databases } from "@/lib/appwriteConfig";
+import { ID } from "appwrite";
+
+type receivedMetadata = {
+  obj_key: string;
+  presigned_put_uri: string;
+};
 
 const NewItem = () => {
   const { folName, setFolName } = FolderNameStore();
@@ -59,22 +66,42 @@ const NewItem = () => {
 
                       if (response.ok) {
                         console.log("Metadata sent successfully");
-                        const uri_data = await response.json();
-                        console.log(uri_data);
+                        const uri_data: receivedMetadata =
+                          await response.json();
+                        console.log("uri_data from NewItem: ", uri_data);
                         try {
-                          const response = await fetch(uri_data, {
-                            method: "PUT",
-                            headers: {
-                              "Content-Type": metadata.contentType,
-                            },
-                            body: e.target.files[0],
-                          });
+                          const response = await fetch(
+                            uri_data.presigned_put_uri,
+                            {
+                              method: "PUT",
+                              headers: {
+                                "Content-Type": metadata.contentType,
+                              },
+                              body: e.target.files[0],
+                            }
+                          );
 
                           if (response.ok) {
-                            alert("File uploaded successfully!");
+                            console.log("File uploaded successfully!");
                           } else {
-                            alert("Error uploading file.");
+                            console.log("Error uploading file.");
                           }
+
+                          const promise = databases.createDocument(
+                            databaseId,
+                            collectionId,
+                            ID.unique(),
+                            { objKey: uri_data.obj_key, isStarred: false }
+                          );
+
+                          promise.then(
+                            function (response) {
+                              console.log("response from appwrite: ", response);
+                            },
+                            function (error) {
+                              console.log(error);
+                            }
+                          );
 
                           router.refresh();
                         } catch (error) {
