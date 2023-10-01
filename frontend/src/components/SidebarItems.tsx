@@ -2,6 +2,7 @@
 import Sidebaritems from "@/lib/utils/Sidebaritems";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
+import Link from "next/link";
 
 const SidebarItems = () => {
   const pathname = usePathname();
@@ -9,7 +10,8 @@ const SidebarItems = () => {
   return (
     <div className="flex flex-col gap-1 py-3 px-2">
       {Sidebaritems.map((item) => (
-        <div
+        <Link
+          href={`${item.path}`}
           key={item.title}
           role="button"
           className={clsx(
@@ -27,7 +29,7 @@ const SidebarItems = () => {
           <div>
             <h3 className="text-[#e6e6e6]">{item.title}</h3>
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   );
