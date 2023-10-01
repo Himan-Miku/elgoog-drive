@@ -1,11 +1,11 @@
 import { Client, Databases } from "appwrite";
 
 const client = new Client()
-  .setEndpoint(process.env.APPWRITE_ENDPOINT!)
-  .setProject(process.env.APPWRITE_PROJECT!);
+  .setEndpoint("https://cloud.appwrite.io/v1")
+  .setProject("6516cefac5f24e866af2");
 
 const databases = new Databases(client);
-const collectionId = process.env.APPWRITE_COLLECTION;
-const databaseId = process.env.APPWRITE_DATABASE;
+const collectionId = "6519651a1c1aeec7a854";
+const databaseId = "651964d905efd4e67224";
 
 export { databases, collectionId, databaseId };
