@@ -7,14 +7,23 @@ type ObjectCardsProps = {
   data: Array<string>;
 };
 
+const deleteObject = async (objKey: string) => {
+  const res = await fetch(`http://localhost:8000/api/deleteObject/${objKey}`, {
+    method: "DELETE",
+  });
+  if (res.ok) {
+    console.log(await res.text());
+  } else {
+    console.log(res.status);
+  }
+};
+
 const ObjectCards = ({ data }: ObjectCardsProps) => {
   return (
     <>
       {data?.map((obj, index) => {
         let imageSrc;
         let smImageSrc;
-
-        console.log("Object : ", obj);
 
         if (obj.endsWith(".png") || obj.endsWith(".jpeg")) {
           imageSrc = "/image-lg.png";
@@ -41,7 +50,6 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
           smImageSrc = "/docs-sm.png";
         }
 
-        console.log("imageSrc:", imageSrc);
         return (
           <div
             key={index}
@@ -86,7 +94,10 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
                     </label>
                   </li>
                   <li>
-                    <label className="flex gap-6 items-center">
+                    <label
+                      className="flex gap-6 items-center"
+                      onClick={() => deleteObject(obj)}
+                    >
                       <MdDelete size={"1.5em"} />
                       <h5>Delete</h5>
                     </label>
