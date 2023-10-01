@@ -4,9 +4,10 @@ use aws_sdk_s3::Client;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use structs::structs::{FolderName, FoldersArray, GetObjectsParams, Metadata};
+use structs::structs::{DownloadObj, FolderName, FoldersArray, GetObjectsParams, Metadata};
 use utils::s3::{
-    create_folder_for_s3, delete_object_using_key, list_all_objects, put_object_uri, show_folders,
+    create_folder_for_s3, delete_object_using_key, get_object_uri, list_all_objects,
+    put_object_uri, show_folders,
 };
 
 mod structs;
@@ -95,6 +96,19 @@ async fn fetch_folders() -> impl Responder {
     HttpResponse::Ok().json(folders_array)
 }
 
+#[post("/api/downloadObject")]
+async fn download_object(key_json: web::Json<DownloadObj>) -> impl Responder {
+    let DownloadObj { obj_key } = key_json.into_inner();
+
+    let shared_config = aws_config::load_from_env().await;
+    let client = Client::new(&shared_config);
+
+    let presigned_get_uri = get_object_uri(&client, "elgoog-drive", obj_key.as_str(), 60)
+        .await
+        .unwrap();
+    HttpResponse::Created().json(presigned_get_uri)
+}
+
 #[post("/api/createFolder")]
 async fn create_folder(folder_name: web::Json<FolderName>) -> impl Responder {
     let FolderName { folder_name } = folder_name.into_inner();
@@ -153,6 +167,7 @@ async fn main() -> std::io::Result<()> {
             .service(get_metadata)
             .service(get_objects)
             .service(remove_object)
+            .service(download_object)
     })
     .bind("localhost:8000")?
     .run()
