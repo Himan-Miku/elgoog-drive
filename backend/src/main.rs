@@ -1,11 +1,13 @@
 use actix_cors::Cors;
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{delete, get, post, web, App, HttpResponse, HttpServer, Responder};
 use aws_sdk_s3::Client;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use structs::structs::{FolderName, FoldersArray, GetObjectsParams, Metadata};
-use utils::s3::{create_folder_for_s3, list_all_objects, put_object_uri, show_folders};
+use utils::s3::{
+    create_folder_for_s3, delete_object_using_key, list_all_objects, put_object_uri, show_folders,
+};
 
 mod structs;
 mod utils;
@@ -112,6 +114,22 @@ async fn create_folder(folder_name: web::Json<FolderName>) -> impl Responder {
     HttpResponse::Created().json(folder_name)
 }
 
+#[delete("/api/deleteObject/{user}/{object_key}")]
+async fn remove_object(path: web::Path<(String, String)>) -> impl Responder {
+    let (user, object_key) = path.into_inner();
+
+    let key = format!("{}/{}", user, object_key);
+
+    let shared_config = aws_config::load_from_env().await;
+    let client = Client::new(&shared_config);
+
+    delete_object_using_key(&client, "elgoog-drive", &key)
+        .await
+        .unwrap();
+
+    HttpResponse::Ok().body("Object Deleted")
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     // show_folders(&client, "elgoog-drive").await.unwrap();
@@ -134,6 +152,7 @@ async fn main() -> std::io::Result<()> {
             .service(fetch_folders)
             .service(get_metadata)
             .service(get_objects)
+            .service(remove_object)
     })
     .bind("localhost:8000")?
     .run()
