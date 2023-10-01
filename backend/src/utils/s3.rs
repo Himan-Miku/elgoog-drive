@@ -57,25 +57,25 @@ pub async fn delete_object_using_key(
     Ok(())
 }
 
-// pub async fn get_object_uri(
-//     client: &Client,
-//     bucket: &str,
-//     object_key: &str,
-//     expires_in: u64,
-// ) -> Result<(), Box<dyn std::error::Error>> {
-//     let expiry_time = Duration::from_secs(expires_in);
+pub async fn get_object_uri(
+    client: &Client,
+    bucket: &str,
+    object_key: &str,
+    expires_in: u64,
+) -> Result<String, Box<dyn std::error::Error>> {
+    let expiry_time = Duration::from_secs(expires_in);
 
-//     let presigned_request = client
-//         .get_object()
-//         .bucket(bucket)
-//         .key(object_key)
-//         .presigned(PresigningConfig::expires_in(expiry_time)?)
-//         .await?;
+    let presigned_request = client
+        .get_object()
+        .bucket(bucket)
+        .key(object_key)
+        .presigned(PresigningConfig::expires_in(expiry_time)?)
+        .await?;
 
-//     println!("Object URI : {}", presigned_request.uri());
+    println!("Object URI : {}", presigned_request.uri());
 
-//     Ok(())
-// }
+    Ok(presigned_request.uri().to_string())
+}
 
 pub async fn put_object_uri(
     client: &Client,
