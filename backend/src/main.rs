@@ -4,7 +4,9 @@ use aws_sdk_s3::Client;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use structs::structs::{DownloadObj, FolderName, FoldersArray, GetObjectsParams, Metadata};
+use structs::structs::{
+    DownloadObj, FolderName, FoldersArray, GetObjectsParams, Metadata, SentMetadata,
+};
 use utils::s3::{
     create_folder_for_s3, delete_object_using_key, get_object_uri, list_all_objects,
     put_object_uri, show_folders,
@@ -74,7 +76,12 @@ async fn get_metadata(metadata: web::Json<Metadata>) -> impl Responder {
             .await
             .unwrap();
 
-    HttpResponse::Created().json(presigned_put_uri)
+    let sent_metadata = SentMetadata {
+        obj_key: formated_string,
+        presigned_put_uri,
+    };
+
+    HttpResponse::Created().json(sent_metadata)
 }
 
 #[post("/api/up")]
