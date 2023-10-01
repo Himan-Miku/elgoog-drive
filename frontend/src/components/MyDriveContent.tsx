@@ -17,7 +17,7 @@ const MyDriveContent = async () => {
   console.log("Data from MyDriveContent : ", data);
 
   return (
-    <div className="px-8 py-2 grid grid-cols-5 gap-4">
+    <div className="px-8 py-2 grid md:grid-cols-5 sm:grid-cols-3 grid-cols-2 gap-4">
       <ObjectCards data={data} />
     </div>
   );
