@@ -29,6 +29,7 @@
     "zustand": "^4.4.1"
   },
   "devDependencies": {
-    "daisyui": "^3.7.7"
+    "daisyui": "^3.7.7",
+    "encoding": "^0.1.13"
   }
 }
