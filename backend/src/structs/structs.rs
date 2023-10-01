@@ -29,3 +29,9 @@ pub struct UserData {
 pub struct GetObjectsParams {
     pub name: String,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DownloadObj {
+    pub obj_key: String,
+}
