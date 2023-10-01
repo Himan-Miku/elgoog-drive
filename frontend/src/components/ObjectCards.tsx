@@ -2,12 +2,44 @@
 import Image from "next/image";
 import { SlOptionsVertical } from "react-icons/sl";
 import { MdSimCardDownload, MdStar, MdDelete } from "react-icons/md";
+import { useRouter } from "next/navigation";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 type ObjectCardsProps = {
   data: Array<string>;
 };
 
-const deleteObject = async (objKey: string) => {
+const downloadObject = async (objKey: string) => {
+  let downloadObj = {
+    objKey,
+  };
+  try {
+    const res1 = await fetch("http://localhost:8000/api/downloadObject", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(downloadObj),
+    });
+    if (res1.ok) {
+      const presigned_get_url = (await res1.json()) as string;
+      console.log(presigned_get_url);
+
+      const link = document.createElement("a");
+      link.href = presigned_get_url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+
+      link.click();
+    } else {
+      console.log(res1.statusText);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const deleteObject = async (objKey: string, router: AppRouterInstance) => {
   const res = await fetch(`http://localhost:8000/api/deleteObject/${objKey}`, {
     method: "DELETE",
   });
@@ -16,9 +48,13 @@ const deleteObject = async (objKey: string) => {
   } else {
     console.log(res.status);
   }
+
+  router.refresh();
 };
 
 const ObjectCards = ({ data }: ObjectCardsProps) => {
+  const router = useRouter();
+
   return (
     <>
       {data?.map((obj, index) => {
@@ -82,7 +118,10 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
                   className="dropdown-content z-[1] menu p-2 shadow bg-custom-backg border border-custom-nav rounded-box w-[13.5rem] mt-[1.35rem] text-custom-green"
                 >
                   <li>
-                    <label className="flex gap-6 items-center">
+                    <label
+                      className="flex gap-6 items-center"
+                      onClick={() => downloadObject(obj)}
+                    >
                       <MdSimCardDownload size={"1.5em"} />
                       <h5>Download</h5>
                     </label>
@@ -96,7 +135,7 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
                   <li>
                     <label
                       className="flex gap-6 items-center"
-                      onClick={() => deleteObject(obj)}
+                      onClick={() => deleteObject(obj, router)}
                     >
                       <MdDelete size={"1.5em"} />
                       <h5>Delete</h5>
