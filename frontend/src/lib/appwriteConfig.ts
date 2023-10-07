@@ -2,7 +2,7 @@ import { Client, Databases } from "appwrite";
 
 const client = new Client()
   .setEndpoint("https://cloud.appwrite.io/v1")
-  .setProject("6516cefac5f24e866af2");
+  .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!);
 
 const databases = new Databases(client);
 const collectionId = "6519651a1c1aeec7a854";
