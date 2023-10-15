@@ -1,13 +1,11 @@
-import { FC } from "react";
-
-interface pageProps {
+interface FolderPageProps {
   params: {
     folderName: string;
   };
 }
 
-const FolderSlugPage: FC<pageProps> = ({ params: { folderName } }) => {
-  return <div>FolderSlugPage : {folderName}</div>;
+const FolderPage = ({ params: { folderName } }: FolderPageProps) => {
+  return <div>FolderPage : {folderName}</div>;
 };
 
-export default FolderSlugPage;
+export default FolderPage;
