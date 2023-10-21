@@ -1,12 +1,18 @@
 import FoldersContent from "./FoldersContent";
+import { getServerSession } from "next-auth";
 
 export type foldersData = {
   folders_vec: Array<string>;
 };
 
 const fetchFolders = async () => {
+  let session = await getServerSession();
+
+  let name = session?.user?.email?.split("@")[0];
   try {
-    const res = await fetch("http://localhost:8000/api/fetchFolders");
+    const res = await fetch(
+      `http://localhost:8000/api/fetchFolders?name=${name}`
+    );
     if (res.ok) {
       const data = (await res.json()) as foldersData;
       console.log(data);
