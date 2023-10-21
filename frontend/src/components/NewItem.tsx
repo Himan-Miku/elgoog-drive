@@ -47,7 +47,7 @@ const NewItem = () => {
                       name: file.name,
                       contentType: file.type,
                       size: file.size,
-                      user: session?.user?.name,
+                      user: session?.user?.email,
                     };
 
                     try {
