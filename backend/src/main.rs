@@ -1,7 +1,6 @@
 use actix_cors::Cors;
 use actix_web::{delete, get, post, web, App, HttpResponse, HttpServer, Responder};
 use aws_sdk_s3::Client;
-use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use structs::structs::{
@@ -14,26 +13,6 @@ use utils::s3::{
 
 mod structs;
 mod utils;
-
-#[derive(Debug, Serialize, Deserialize)]
-struct Intro {
-    name: String,
-    number: i32,
-}
-
-#[get("/api/hello")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello World")
-}
-
-#[get("/api/jsonRes")]
-async fn json_res() -> impl Responder {
-    let res = Intro {
-        name: String::from("Himan"),
-        number: 7,
-    };
-    HttpResponse::Ok().json(res)
-}
 
 #[get("/api/getObjects")]
 async fn get_objects(name: web::Query<GetObjectsParams>) -> impl Responder {
@@ -82,12 +61,6 @@ async fn get_metadata(metadata: web::Json<Metadata>) -> impl Responder {
     };
 
     HttpResponse::Created().json(sent_metadata)
-}
-
-#[post("/api/up")]
-async fn up_shit(intro: web::Json<Intro>) -> impl Responder {
-    let got_intro = intro.into_inner();
-    HttpResponse::Created().json(got_intro)
 }
 
 #[get("/api/fetchFolders")]
@@ -166,9 +139,6 @@ async fn main() -> std::io::Result<()> {
 
         App::new()
             .wrap(cors)
-            .service(hello)
-            .service(json_res)
-            .service(up_shit)
             .service(create_folder)
             .service(fetch_folders)
             .service(get_metadata)
