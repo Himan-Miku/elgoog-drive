@@ -11,7 +11,7 @@ const list_objects = async (name: string) => {
 
 const MyDriveContent = async () => {
   const session = await getServerSession();
-  let username = session?.user?.name?.split(" ")[0];
+  let username = session?.user?.email?.split("@")[0];
   const data = await list_objects(username!);
 
   console.log("Data from MyDriveContent : ", data);
