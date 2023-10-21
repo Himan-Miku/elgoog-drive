@@ -126,14 +126,6 @@ async fn remove_object(path: web::Path<(String, String)>) -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    // show_folders(&client, "elgoog-drive").await.unwrap();
-    // get_object_uri(&client, "elgoog-drive", "Google-Drive-logo.png", 60)
-    //     .await
-    //     .unwrap();
-    // put_object_uri(&client, "elgoog-drive", "images/h.png", "image/png", 3600)
-    //     .await
-    //     .unwrap();
-
     HttpServer::new(|| {
         let cors = Cors::permissive();
 
