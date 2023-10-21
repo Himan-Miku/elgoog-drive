@@ -64,6 +64,7 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
         if (
           obj.endsWith(".png") ||
           obj.endsWith(".jpeg") ||
+          obj.endsWith(".jpg") ||
           obj.endsWith(".svg")
         ) {
           imageSrc = "/image-lg.png";
