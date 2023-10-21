@@ -1,6 +1,9 @@
-import Image from "next/image";
+import { getServerSession } from "next-auth";
+import Logout from "./Logout";
 
-const Navbar = () => {
+const Navbar = async () => {
+  const session = await getServerSession();
+
   return (
     <div className="flex justify-between w-full items-center py-3 md:px-14 h-full">
       <div className="flex gap-3 min-w-fit md:w-[35rem] bg-custom-backg rounded-3xl px-3 py-1">
@@ -21,15 +24,7 @@ const Navbar = () => {
           placeholder="Search in Drive"
         />
       </div>
-      <div>
-        <Image
-          src={`https://avatars.githubusercontent.com/u/99860097?v=4`}
-          alt={`Avatar`}
-          height={40}
-          width={40}
-          className="rounded-full"
-        />
-      </div>
+      <Logout image={session?.user?.image!} />
     </div>
   );
 };
