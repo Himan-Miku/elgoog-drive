@@ -41,7 +41,7 @@ async fn get_metadata(metadata: web::Json<Metadata>) -> impl Responder {
         .chars()
         .take(6)
         .collect::<String>();
-    let user_name = user.split(" ").collect::<Vec<&str>>();
+    let user_name = user.split("@").collect::<Vec<&str>>();
     let formated_string = format!(
         "{}/{}-{}.{}",
         user_name.first().unwrap(),
@@ -64,10 +64,11 @@ async fn get_metadata(metadata: web::Json<Metadata>) -> impl Responder {
 }
 
 #[get("/api/fetchFolders")]
-async fn fetch_folders() -> impl Responder {
+async fn fetch_folders(name: web::Query<GetObjectsParams>) -> impl Responder {
     let shared_config = aws_config::load_from_env().await;
     let client = Client::new(&shared_config);
-    let folders = show_folders(&client, "elgoog-drive").await.unwrap();
+    let user = &name.name;
+    let folders = show_folders(&client, "elgoog-drive", user).await.unwrap();
 
     let folders_array = FoldersArray {
         folders_vec: folders,
