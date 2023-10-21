@@ -1,13 +1,17 @@
 use aws_sdk_s3::{presigning::PresigningConfig, Client, Error};
 use std::time::Duration;
 
-pub async fn show_folders(client: &Client, bucket: &str) -> Result<Vec<String>, Error> {
+pub async fn show_folders(
+    client: &Client,
+    bucket: &str,
+    user: &String,
+) -> Result<Vec<String>, Error> {
     let mut folders: Vec<String> = Vec::new();
 
     let objects = client
         .list_objects_v2()
         .bucket(bucket)
-        .prefix("")
+        .prefix(user)
         .delimiter("/")
         .send()
         .await?;
