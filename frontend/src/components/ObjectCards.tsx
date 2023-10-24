@@ -2,17 +2,17 @@
 import Image from "next/image";
 import { SlOptionsVertical } from "react-icons/sl";
 import { MdSimCardDownload, MdStar, MdDelete } from "react-icons/md";
-import { useRouter } from "next/navigation";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {
   DocumentData,
   QueryDocumentSnapshot,
+  deleteDoc,
   doc,
   updateDoc,
 } from "firebase/firestore";
 import { firestoreData } from "./NewItem";
 import { firestoreDb } from "@/lib/utils/firebaseConfig";
 import toast, { Toaster } from "react-hot-toast";
+import { usePathname } from "next/navigation";
 
 type ObjectCardsProps = {
   data: QueryDocumentSnapshot<DocumentData, DocumentData>[] | undefined;
@@ -32,6 +32,17 @@ const starNotify = () =>
 const deleteNotify = () =>
   toast("Item Deleted", {
     icon: "🗑️",
+    duration: 4000,
+    style: {
+      borderRadius: "10px",
+      background: "#3F4BD1",
+      color: "#fff",
+    },
+  });
+
+const unstarNotify = () =>
+  toast("Item Removed from Starred", {
+    icon: "💫",
     duration: 4000,
     style: {
       borderRadius: "10px",
@@ -70,30 +81,37 @@ const downloadObject = async (objKey: string) => {
   }
 };
 
-const deleteObject = async (objKey: string, router: AppRouterInstance) => {
+const deleteObject = async (objKey: string, docId: string) => {
   const res = await fetch(`http://localhost:8000/api/deleteObject/${objKey}`, {
     method: "DELETE",
   });
   if (res.ok) {
     console.log(await res.text());
+
+    await deleteDoc(doc(firestoreDb, "objects", docId));
   } else {
     console.log(res.status);
   }
 
   deleteNotify();
-
-  router.refresh();
 };
 
-const starObject = async (objKey: string, docId: string) => {
+const starObject = async (docId: string) => {
   await updateDoc(doc(firestoreDb, "objects", docId), {
     isStarred: true,
   });
   starNotify();
 };
 
+const UnstarObject = async (docId: string) => {
+  await updateDoc(doc(firestoreDb, "objects", docId), {
+    isStarred: false,
+  });
+  unstarNotify();
+};
+
 const ObjectCards = ({ data }: ObjectCardsProps) => {
-  const router = useRouter();
+  const pathname = usePathname();
 
   return (
     <>
@@ -133,10 +151,9 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
         }
 
         return (
-          <>
+          <div key={obj.id}>
             <Toaster position="bottom-left" reverseOrder={false} />
             <div
-              key={obj.id}
               className="w-full bg-custom-nav px-3 pt-2 pb-3 rounded-xl h-52 flex flex-col gap-2 group one-edge-box-shadow hover:-translate-y-1 transition-all duration-300 ease-in-out"
               onDoubleClick={() => downloadObject(objectData.name)}
             >
@@ -185,18 +202,28 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
                       </label>
                     </li>
                     <li>
-                      <label
-                        className="flex gap-6 items-center"
-                        onClick={() => starObject(objectData.name, obj.id)}
-                      >
-                        <MdStar size={"1.5em"} />
-                        <h5>Star</h5>
-                      </label>
+                      {pathname === "/starred" ? (
+                        <label
+                          className="flex gap-6 items-center"
+                          onClick={() => UnstarObject(obj.id)}
+                        >
+                          <MdStar size={"1.5em"} />
+                          <h5>Unstar</h5>
+                        </label>
+                      ) : (
+                        <label
+                          className="flex gap-6 items-center"
+                          onClick={() => starObject(obj.id)}
+                        >
+                          <MdStar size={"1.5em"} />
+                          <h5>Star</h5>
+                        </label>
+                      )}
                     </li>
                     <li>
                       <label
                         className="flex gap-6 items-center"
-                        onClick={() => deleteObject(objectData.name, router)}
+                        onClick={() => deleteObject(objectData.name, obj.id)}
                       >
                         <MdDelete size={"1.5em"} />
                         <h5>Delete</h5>
@@ -209,7 +236,7 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
                 <Image src={imageSrc} alt="big-image" height={64} width={64} />
               </div>
             </div>
-          </>
+          </div>
         );
       })}
     </>
