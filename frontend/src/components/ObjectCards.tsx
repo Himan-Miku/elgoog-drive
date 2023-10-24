@@ -4,9 +4,17 @@ import { SlOptionsVertical } from "react-icons/sl";
 import { MdSimCardDownload, MdStar, MdDelete } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import {
+  DocumentData,
+  QueryDocumentSnapshot,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
+import { firestoreData } from "./NewItem";
+import { firestoreDb } from "@/lib/utils/firebaseConfig";
 
 type ObjectCardsProps = {
-  data: Array<string>;
+  data: QueryDocumentSnapshot<DocumentData, DocumentData>[] | undefined;
 };
 
 const downloadObject = async (objKey: string) => {
@@ -52,37 +60,44 @@ const deleteObject = async (objKey: string, router: AppRouterInstance) => {
   router.refresh();
 };
 
+const starObject = async (objKey: string, docId: string) => {
+  await updateDoc(doc(firestoreDb, "objects", docId), {
+    isStarred: true,
+  });
+};
+
 const ObjectCards = ({ data }: ObjectCardsProps) => {
   const router = useRouter();
 
   return (
     <>
-      {data?.map((obj, index) => {
+      {data?.map((obj) => {
         let imageSrc;
         let smImageSrc;
+        let objectData = obj.data() as firestoreData;
 
         if (
-          obj.endsWith(".png") ||
-          obj.endsWith(".jpeg") ||
-          obj.endsWith(".jpg") ||
-          obj.endsWith(".svg")
+          objectData.name.endsWith(".png") ||
+          objectData.name.endsWith(".jpeg") ||
+          objectData.name.endsWith(".jpg") ||
+          objectData.name.endsWith(".svg")
         ) {
           imageSrc = "/image-lg.png";
           smImageSrc = "/image-sm.png";
-        } else if (obj.endsWith(".pdf")) {
+        } else if (objectData.name.endsWith(".pdf")) {
           imageSrc = "/pdf-lg.png";
           smImageSrc = "/pdf-sm.png";
         } else if (
-          obj.endsWith(".mp4") ||
-          obj.endsWith(".mov") ||
-          obj.endsWith(".wmv")
+          objectData.name.endsWith(".mp4") ||
+          objectData.name.endsWith(".mov") ||
+          objectData.name.endsWith(".wmv")
         ) {
           imageSrc = "/mp4-lg.png";
           smImageSrc = "/mp4-sm.png";
         } else if (
-          obj.endsWith(".mp3") ||
-          obj.endsWith(".wma") ||
-          obj.endsWith(".wav")
+          objectData.name.endsWith(".mp3") ||
+          objectData.name.endsWith(".wma") ||
+          objectData.name.endsWith(".wav")
         ) {
           imageSrc = "/music-lg.png";
           smImageSrc = "/music-sm.png";
@@ -93,9 +108,9 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
 
         return (
           <div
-            key={index}
+            key={obj.id}
             className="w-full bg-custom-nav px-3 pt-2 pb-3 rounded-xl h-52 flex flex-col gap-2 group one-edge-box-shadow hover:-translate-y-1 transition-all duration-300 ease-in-out"
-            onDoubleClick={() => downloadObject(obj)}
+            onDoubleClick={() => downloadObject(objectData.name)}
           >
             <div className="flex gap-2 px-2 py-2 items-center justify-between">
               <Image
@@ -106,11 +121,20 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
                 className="w-5"
               />
               <h3 className="text-[#e6e6e6] text-sm font-medium group-hover:text-blue-400 transition-all duration-300 ease-in-out">
-                {obj.substring(obj.indexOf("/") + 1, obj.length).length > 14
-                  ? obj
-                      .substring(obj.indexOf("/") + 1, obj.length)
+                {objectData.name.substring(
+                  objectData.name.indexOf("/") + 1,
+                  objectData.name.length
+                ).length > 14
+                  ? objectData.name
+                      .substring(
+                        objectData.name.indexOf("/") + 1,
+                        objectData.name.length
+                      )
                       .substring(0, 14) + "..."
-                  : obj.substring(obj.indexOf("/") + 1, obj.length)}
+                  : objectData.name.substring(
+                      objectData.name.indexOf("/") + 1,
+                      objectData.name.length
+                    )}
               </h3>
               <div className="dropdown dropdown-end md:translate-x-[14.8px]">
                 <div
@@ -126,14 +150,17 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
                   <li>
                     <label
                       className="flex gap-6 items-center"
-                      onClick={() => downloadObject(obj)}
+                      onClick={() => downloadObject(objectData.name)}
                     >
                       <MdSimCardDownload size={"1.5em"} />
                       <h5>Download</h5>
                     </label>
                   </li>
                   <li>
-                    <label className="flex gap-6 items-center">
+                    <label
+                      className="flex gap-6 items-center"
+                      onClick={() => starObject(objectData.name, obj.id)}
+                    >
                       <MdStar size={"1.5em"} />
                       <h5>Star</h5>
                     </label>
@@ -141,7 +168,7 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
                   <li>
                     <label
                       className="flex gap-6 items-center"
-                      onClick={() => deleteObject(obj, router)}
+                      onClick={() => deleteObject(objectData.name, router)}
                     >
                       <MdDelete size={"1.5em"} />
                       <h5>Delete</h5>
