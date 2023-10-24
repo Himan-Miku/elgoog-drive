@@ -17,7 +17,7 @@ type receivedMetadata = {
   user_name: string;
 };
 
-type firestoreData = {
+export type firestoreData = {
   name: string;
   user: string;
   contentType: string;
