@@ -12,10 +12,33 @@ import {
 } from "firebase/firestore";
 import { firestoreData } from "./NewItem";
 import { firestoreDb } from "@/lib/utils/firebaseConfig";
+import toast, { Toaster } from "react-hot-toast";
 
 type ObjectCardsProps = {
   data: QueryDocumentSnapshot<DocumentData, DocumentData>[] | undefined;
 };
+
+const starNotify = () =>
+  toast("Item Starred", {
+    icon: "⭐",
+    duration: 4000,
+    style: {
+      borderRadius: "10px",
+      background: "#3F4BD1",
+      color: "#fff",
+    },
+  });
+
+const deleteNotify = () =>
+  toast("Item Deleted", {
+    icon: "🗑️",
+    duration: 4000,
+    style: {
+      borderRadius: "10px",
+      background: "#3F4BD1",
+      color: "#fff",
+    },
+  });
 
 const downloadObject = async (objKey: string) => {
   let downloadObj = {
@@ -57,6 +80,8 @@ const deleteObject = async (objKey: string, router: AppRouterInstance) => {
     console.log(res.status);
   }
 
+  deleteNotify();
+
   router.refresh();
 };
 
@@ -64,6 +89,7 @@ const starObject = async (objKey: string, docId: string) => {
   await updateDoc(doc(firestoreDb, "objects", docId), {
     isStarred: true,
   });
+  starNotify();
 };
 
 const ObjectCards = ({ data }: ObjectCardsProps) => {
@@ -107,80 +133,83 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
         }
 
         return (
-          <div
-            key={obj.id}
-            className="w-full bg-custom-nav px-3 pt-2 pb-3 rounded-xl h-52 flex flex-col gap-2 group one-edge-box-shadow hover:-translate-y-1 transition-all duration-300 ease-in-out"
-            onDoubleClick={() => downloadObject(objectData.name)}
-          >
-            <div className="flex gap-2 px-2 py-2 items-center justify-between">
-              <Image
-                src={smImageSrc}
-                alt="small-image"
-                height={20}
-                width={24}
-                className="w-5"
-              />
-              <h3 className="text-[#e6e6e6] text-sm font-medium group-hover:text-blue-400 transition-all duration-300 ease-in-out">
-                {objectData.name.substring(
-                  objectData.name.indexOf("/") + 1,
-                  objectData.name.length
-                ).length > 14
-                  ? objectData.name
-                      .substring(
+          <>
+            <Toaster position="bottom-left" reverseOrder={false} />
+            <div
+              key={obj.id}
+              className="w-full bg-custom-nav px-3 pt-2 pb-3 rounded-xl h-52 flex flex-col gap-2 group one-edge-box-shadow hover:-translate-y-1 transition-all duration-300 ease-in-out"
+              onDoubleClick={() => downloadObject(objectData.name)}
+            >
+              <div className="flex gap-2 px-2 py-2 items-center justify-between">
+                <Image
+                  src={smImageSrc}
+                  alt="small-image"
+                  height={20}
+                  width={24}
+                  className="w-5"
+                />
+                <h3 className="text-[#e6e6e6] text-sm font-medium group-hover:text-blue-400 transition-all duration-300 ease-in-out">
+                  {objectData.name.substring(
+                    objectData.name.indexOf("/") + 1,
+                    objectData.name.length
+                  ).length > 14
+                    ? objectData.name
+                        .substring(
+                          objectData.name.indexOf("/") + 1,
+                          objectData.name.length
+                        )
+                        .substring(0, 14) + "..."
+                    : objectData.name.substring(
                         objectData.name.indexOf("/") + 1,
                         objectData.name.length
-                      )
-                      .substring(0, 14) + "..."
-                  : objectData.name.substring(
-                      objectData.name.indexOf("/") + 1,
-                      objectData.name.length
-                    )}
-              </h3>
-              <div className="dropdown dropdown-end md:translate-x-[14.8px]">
-                <div
-                  tabIndex={0}
-                  className="p-1 rounded-full hover:bg-custom-backg transition-colors duration-300 ease-in-out"
-                >
-                  <SlOptionsVertical />
+                      )}
+                </h3>
+                <div className="dropdown dropdown-end md:translate-x-[14.8px]">
+                  <div
+                    tabIndex={0}
+                    className="p-1 rounded-full hover:bg-custom-backg transition-colors duration-300 ease-in-out"
+                  >
+                    <SlOptionsVertical />
+                  </div>
+                  <ul
+                    tabIndex={0}
+                    className="dropdown-content z-[1] menu p-2 shadow bg-custom-backg border border-custom-nav rounded-box w-[13.5rem] mt-[1.35rem] text-custom-green"
+                  >
+                    <li>
+                      <label
+                        className="flex gap-6 items-center"
+                        onClick={() => downloadObject(objectData.name)}
+                      >
+                        <MdSimCardDownload size={"1.5em"} />
+                        <h5>Download</h5>
+                      </label>
+                    </li>
+                    <li>
+                      <label
+                        className="flex gap-6 items-center"
+                        onClick={() => starObject(objectData.name, obj.id)}
+                      >
+                        <MdStar size={"1.5em"} />
+                        <h5>Star</h5>
+                      </label>
+                    </li>
+                    <li>
+                      <label
+                        className="flex gap-6 items-center"
+                        onClick={() => deleteObject(objectData.name, router)}
+                      >
+                        <MdDelete size={"1.5em"} />
+                        <h5>Delete</h5>
+                      </label>
+                    </li>
+                  </ul>
                 </div>
-                <ul
-                  tabIndex={0}
-                  className="dropdown-content z-[1] menu p-2 shadow bg-custom-backg border border-custom-nav rounded-box w-[13.5rem] mt-[1.35rem] text-custom-green"
-                >
-                  <li>
-                    <label
-                      className="flex gap-6 items-center"
-                      onClick={() => downloadObject(objectData.name)}
-                    >
-                      <MdSimCardDownload size={"1.5em"} />
-                      <h5>Download</h5>
-                    </label>
-                  </li>
-                  <li>
-                    <label
-                      className="flex gap-6 items-center"
-                      onClick={() => starObject(objectData.name, obj.id)}
-                    >
-                      <MdStar size={"1.5em"} />
-                      <h5>Star</h5>
-                    </label>
-                  </li>
-                  <li>
-                    <label
-                      className="flex gap-6 items-center"
-                      onClick={() => deleteObject(objectData.name, router)}
-                    >
-                      <MdDelete size={"1.5em"} />
-                      <h5>Delete</h5>
-                    </label>
-                  </li>
-                </ul>
+              </div>
+              <div className="w-full grid place-content-center flex-grow bg-custom-backg h-20 rounded-xl">
+                <Image src={imageSrc} alt="big-image" height={64} width={64} />
               </div>
             </div>
-            <div className="w-full grid place-content-center flex-grow bg-custom-backg h-20 rounded-xl">
-              <Image src={imageSrc} alt="big-image" height={64} width={64} />
-            </div>
-          </div>
+          </>
         );
       })}
     </>
