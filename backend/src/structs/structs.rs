@@ -40,4 +40,5 @@ pub struct DownloadObj {
 pub struct SentMetadata {
     pub obj_key: String,
     pub presigned_put_uri: String,
+    pub user_name: String,
 }

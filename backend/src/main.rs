@@ -58,6 +58,7 @@ async fn get_metadata(metadata: web::Json<Metadata>) -> impl Responder {
     let sent_metadata = SentMetadata {
         obj_key: formated_string,
         presigned_put_uri,
+        user_name: user_name[0].clone().to_string(),
     };
 
     HttpResponse::Created().json(sent_metadata)
