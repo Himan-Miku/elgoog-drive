@@ -7,7 +7,6 @@ import {
   MdOutlineUploadFile,
   MdOutlineDriveFolderUpload,
 } from "react-icons/md";
-import { useRouter } from "next/navigation";
 import { addDoc } from "firebase/firestore";
 import { collectionRef } from "@/lib/utils/firebaseConfig";
 
@@ -28,7 +27,6 @@ export type firestoreData = {
 const NewItem = () => {
   const { folName, setFolName } = FolderNameStore();
   const { data: session, status } = useSession();
-  const router = useRouter();
 
   return (
     <>
@@ -102,8 +100,6 @@ const NewItem = () => {
                           } else {
                             console.log("Error uploading file.");
                           }
-
-                          router.refresh();
                         } catch (error) {
                           console.error("An error occurred:", error);
                         }
