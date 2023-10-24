@@ -11,5 +11,5 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const firestoreDb = getFirestore(app);
+export const firestoreDb = getFirestore(app);
 export const collectionRef = collection(firestoreDb, "objects");
