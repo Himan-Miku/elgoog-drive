@@ -26,6 +26,10 @@
     }
 }
 
+.shadow-small {
+    box-shadow: 0 0 1px #e6e6e6;
+}
+
 .one-edge-box-shadow:hover {
     box-shadow: 0 3px 2px -2px #3F4BD1;
 }
