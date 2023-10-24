@@ -10,7 +10,7 @@ import {
 import { addDoc } from "firebase/firestore";
 import { collectionRef } from "@/lib/utils/firebaseConfig";
 
-type receivedMetadata = {
+export type receivedMetadata = {
   obj_key: string;
   presigned_put_uri: string;
   user_name: string;
