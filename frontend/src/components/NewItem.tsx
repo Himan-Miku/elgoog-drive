@@ -8,10 +8,21 @@ import {
   MdOutlineDriveFolderUpload,
 } from "react-icons/md";
 import { useRouter } from "next/navigation";
+import { addDoc } from "firebase/firestore";
+import { collectionRef } from "@/lib/utils/firebaseConfig";
 
 type receivedMetadata = {
   obj_key: string;
   presigned_put_uri: string;
+  user_name: string;
+};
+
+type firestoreData = {
+  name: string;
+  user: string;
+  contentType: string;
+  size: number;
+  isStarred: boolean;
 };
 
 const NewItem = () => {
@@ -81,6 +92,13 @@ const NewItem = () => {
 
                           if (response.ok) {
                             console.log("File uploaded successfully!");
+                            await addDoc(collectionRef, {
+                              name: uri_data.obj_key,
+                              user: uri_data.user_name,
+                              size: file.size,
+                              contentType: file.type,
+                              isStarred: false,
+                            });
                           } else {
                             console.log("Error uploading file.");
                           }
