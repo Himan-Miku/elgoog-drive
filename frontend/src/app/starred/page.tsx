@@ -1,5 +1,5 @@
 "use client";
-import { firestoreData } from "@/components/NewItem";
+import ObjectCards from "@/components/ObjectCards";
 import { collectionRef } from "@/lib/utils/firebaseConfig";
 import { query, where } from "firebase/firestore";
 import { useSession } from "next-auth/react";
@@ -19,17 +19,13 @@ export default function StarredPage() {
   });
 
   return (
-    <div>
-      {snapshot?.docs.map((doc) => {
-        const data = doc.data() as firestoreData;
-        return (
-          <div key={doc.id}>
-            <h3>name:{data.name}</h3>
-            <h3>size:{data.size}</h3>
-            <h3>contentType:{data.contentType}</h3>
-          </div>
-        );
-      })}
+    <div className="px-8 py-6 flex flex-col gap-6">
+      <div className="text-custom-green text-xl font-semibold px-1">
+        Starred
+      </div>
+      <div className="grid md:grid-cols-5 sm:grid-cols-3 grid-cols-2 gap-4">
+        <ObjectCards data={snapshot?.docs} />
+      </div>
     </div>
   );
 }
