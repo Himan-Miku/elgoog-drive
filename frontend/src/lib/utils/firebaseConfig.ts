@@ -2,12 +2,12 @@ import { initializeApp } from "firebase/app";
 import { collection, getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBaJspgr20esUo9-kR9M3QnPEhh0NrTGNk",
-  authDomain: "elgoog-drive-88b3d.firebaseapp.com",
-  projectId: "elgoog-drive-88b3d",
-  storageBucket: "elgoog-drive-88b3d.appspot.com",
-  messagingSenderId: "1023892633662",
-  appId: "1:1023892633662:web:d7b7fac355fb526d0a396f",
+  apiKey: "AIzaSyAfaVPvy9zCDJ7visTkVjpzjWBcvBvwrzQ",
+  authDomain: "elgoog-drive-6917f.firebaseapp.com",
+  projectId: "elgoog-drive-6917f",
+  storageBucket: "elgoog-drive-6917f.appspot.com",
+  messagingSenderId: "155164330496",
+  appId: "1:155164330496:web:bf6dda6be87522cbcfa6e5",
 };
 
 const app = initializeApp(firebaseConfig);
