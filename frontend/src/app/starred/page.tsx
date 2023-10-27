@@ -20,7 +20,7 @@ export default function StarredPage() {
 
   return (
     <div className="px-8 py-7 flex flex-col gap-6">
-      <div className="text-custom-green text-xl font-semibold px-1">
+      <div className="text-custom-green text-xl font-semibold px-1 tracking-wide">
         Starred Files
       </div>
       <div className="grid md:grid-cols-5 sm:grid-cols-3 grid-cols-2 gap-4">
