@@ -169,13 +169,13 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
                   {objectData.name.substring(
                     objectData.name.indexOf("/") + 1,
                     objectData.name.length
-                  ).length > 14
+                  ).length > 13
                     ? objectData.name
                         .substring(
                           objectData.name.indexOf("/") + 1,
                           objectData.name.length
                         )
-                        .substring(0, 14) + "..."
+                        .substring(0, 13) + "..."
                     : objectData.name.substring(
                         objectData.name.indexOf("/") + 1,
                         objectData.name.length
