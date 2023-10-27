@@ -120,29 +120,16 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
         let smImageSrc;
         let objectData = obj.data() as firestoreData;
 
-        if (
-          objectData.name.endsWith(".png") ||
-          objectData.name.endsWith(".jpeg") ||
-          objectData.name.endsWith(".jpg") ||
-          objectData.name.endsWith(".svg")
-        ) {
+        if (objectData.contentType.startsWith("image")) {
           imageSrc = "/image-lg.png";
           smImageSrc = "/image-sm.png";
-        } else if (objectData.name.endsWith(".pdf")) {
+        } else if (objectData.contentType === "application/pdf") {
           imageSrc = "/pdf-lg.png";
           smImageSrc = "/pdf-sm.png";
-        } else if (
-          objectData.name.endsWith(".mp4") ||
-          objectData.name.endsWith(".mov") ||
-          objectData.name.endsWith(".wmv")
-        ) {
+        } else if (objectData.contentType.startsWith("video")) {
           imageSrc = "/mp4-lg.png";
           smImageSrc = "/mp4-sm.png";
-        } else if (
-          objectData.name.endsWith(".mp3") ||
-          objectData.name.endsWith(".wma") ||
-          objectData.name.endsWith(".wav")
-        ) {
+        } else if (objectData.contentType.startsWith("audio")) {
           imageSrc = "/music-lg.png";
           smImageSrc = "/music-sm.png";
         } else {

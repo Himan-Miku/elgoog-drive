@@ -30,26 +30,13 @@ const StorageList = () => {
             let smImageSrc: string;
             const fileData = file.data() as firestoreData;
 
-            if (
-              fileData.name.endsWith(".png") ||
-              fileData.name.endsWith(".jpeg") ||
-              fileData.name.endsWith(".jpg") ||
-              fileData.name.endsWith(".svg")
-            ) {
+            if (fileData.contentType.startsWith("image")) {
               smImageSrc = "/image-sm.png";
-            } else if (fileData.name.endsWith(".pdf")) {
+            } else if (fileData.contentType === "application/pdf") {
               smImageSrc = "/pdf-sm.png";
-            } else if (
-              fileData.name.endsWith(".mp4") ||
-              fileData.name.endsWith(".mov") ||
-              fileData.name.endsWith(".wmv")
-            ) {
+            } else if (fileData.contentType.startsWith("video")) {
               smImageSrc = "/mp4-sm.png";
-            } else if (
-              fileData.name.endsWith(".mp3") ||
-              fileData.name.endsWith(".wma") ||
-              fileData.name.endsWith(".wav")
-            ) {
+            } else if (fileData.contentType.startsWith("audio")) {
               smImageSrc = "/music-sm.png";
             } else {
               smImageSrc = "/docs-sm.png";
