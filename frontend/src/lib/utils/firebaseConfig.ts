@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { collection, getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAfaVPvy9zCDJ7visTkVjpzjWBcvBvwrzQ",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: "elgoog-drive-6917f.firebaseapp.com",
   projectId: "elgoog-drive-6917f",
   storageBucket: "elgoog-drive-6917f.appspot.com",
