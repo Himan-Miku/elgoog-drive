@@ -1,8 +1,45 @@
-import { getServerSession } from "next-auth";
+"use client";
 import Logout from "./Logout";
+import { useSession } from "next-auth/react";
+import algoliasearch from "algoliasearch/lite";
+import { useState } from "react";
+import { firestoreData } from "./NewItem";
 
-const Navbar = async () => {
-  const session = await getServerSession();
+interface SearchResultItem {
+  readonly objectID: string;
+  readonly _highlightResult?: {} | undefined;
+  readonly _snippetResult?: {} | undefined;
+  readonly _distinctSeqID?: number | undefined;
+}
+
+type SearchResults = SearchResultItem[];
+
+const Navbar = () => {
+  const [query, setQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchResults>([]);
+  const { data: session } = useSession();
+
+  const searchClient = algoliasearch(
+    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!,
+    process.env.NEXT_PUBLIC_ALGOLIA_API_KEY!
+  );
+  const index = searchClient.initIndex("objects");
+
+  async function search() {
+    if (query.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+
+    try {
+      const result = await index.search(query);
+      setSearchResults(result.hits);
+    } catch (error) {
+      console.error("Error Searching with Algolia : ", error);
+    }
+  }
+
+  console.log("Algolia SearchResults : ", searchResults);
 
   return (
     <div className="flex justify-between w-full items-center py-3 md:px-14 h-full">
@@ -22,6 +59,9 @@ const Navbar = async () => {
           type="search"
           className="w-full focus:outline-none caret-white bg-custom-backg font-semibold text-[#e6e6e6] placeholder:font-semibold"
           placeholder="Search in Drive"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyUp={search}
         />
       </div>
       <Logout image={session?.user?.image!} />
