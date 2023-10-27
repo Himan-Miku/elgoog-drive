@@ -13,11 +13,6 @@ const MyDriveContent = () => {
 
   const [snapshot, loading, error] = useCollection(q);
 
-  console.log("Data from MyDriveContent : ", snapshot?.docs);
-  snapshot?.docs.forEach((obj) => {
-    console.log(obj.data());
-  });
-
   return (
     <div className="px-8 py-2 grid md:grid-cols-5 sm:grid-cols-3 grid-cols-2 gap-4">
       <ObjectCards data={snapshot?.docs} />
