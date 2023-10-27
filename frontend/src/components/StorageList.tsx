@@ -1,18 +1,30 @@
 "use client";
 import { collectionRef } from "@/lib/utils/firebaseConfig";
-import { query, where } from "firebase/firestore";
+import { orderBy, query, where } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { firestoreData } from "./NewItem";
 import Image from "next/image";
 import bytes from "bytes";
+import { FaSortNumericDownAlt, FaSortNumericUpAlt } from "react-icons/fa";
+import { useState } from "react";
+
+enum OrderBy {
+  Asc = "asc",
+  Desc = "desc",
+}
 
 const StorageList = () => {
   const { data: session } = useSession();
+  const [isDesc, setIsDesc] = useState(true);
 
   const username = session?.user?.email?.split("@")[0] || "";
 
-  const q = query(collectionRef, where("user", "==", username));
+  const q = query(
+    collectionRef,
+    where("user", "==", username),
+    orderBy("size", isDesc ? OrderBy.Desc : OrderBy.Asc)
+  );
 
   const [snapshot, loading, error] = useCollection(q);
 
@@ -22,7 +34,13 @@ const StorageList = () => {
         <thead>
           <tr className="font-semibold text-lg">
             <th className="py-4 w-[85%]">Files using Drive Storage</th>
-            <th className="p-4">Storage Used</th>
+            <th
+              className="p-4 cursor-pointer flex gap-2 items-center"
+              onClick={() => setIsDesc((prev) => !prev)}
+            >
+              <h3>Storage Used</h3>
+              {isDesc ? <FaSortNumericDownAlt /> : <FaSortNumericUpAlt />}
+            </th>
           </tr>
         </thead>
         <tbody>
