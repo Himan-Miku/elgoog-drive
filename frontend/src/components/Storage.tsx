@@ -55,9 +55,14 @@ const Storage = () => {
       <div className="text-custom-green text-xl font-semibold tracking-wide">
         <h3>Storage Uploaded</h3>
       </div>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-4">
         <div>
-          <h3>{bytes.format(totalSize!, { unitSeparator: " " })} used</h3>
+          <h3>
+            <span className="text-2xl text-[#e6e6e6e3] font-semibold">
+              {bytes.format(totalSize!, { unitSeparator: " " })}
+            </span>{" "}
+            used
+          </h3>
         </div>
         <div className="flex h-2 rounded-2xl w-full">
           <div
