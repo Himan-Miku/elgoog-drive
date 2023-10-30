@@ -6,8 +6,9 @@ import { onSnapshot, query, where } from "firebase/firestore";
 import { ResultsStore } from "@/context/MyDriveDataContext";
 import { firestoreData } from "./NewItem";
 import { useEffect } from "react";
+import { AlgoliaStore } from "@/context/AlgoliaContext";
 
-interface firestoreDataWithoutID {
+export interface firestoreDataWithoutID {
   name: string;
   user: string;
   contentType: string;
@@ -16,7 +17,9 @@ interface firestoreDataWithoutID {
 }
 
 const MyDriveContent = () => {
+  let renderingResults;
   const { results, setResults } = ResultsStore();
+  const { queryy, setQueryy, searchResults, setSearchResults } = AlgoliaStore();
   const { data: session } = useSession();
   let username = session?.user?.email?.split("@")[0] || "";
 
@@ -43,9 +46,15 @@ const MyDriveContent = () => {
     };
   }, []);
 
+  if (queryy === "") {
+    renderingResults = results;
+  } else {
+    renderingResults = searchResults;
+  }
+
   return (
     <div className="px-8 py-2 grid md:grid-cols-5 sm:grid-cols-3 grid-cols-2 gap-4">
-      <ObjectCards data={results} />
+      <ObjectCards data={renderingResults} />
     </div>
   );
 };
