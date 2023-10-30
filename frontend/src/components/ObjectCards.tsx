@@ -2,13 +2,7 @@
 import Image from "next/image";
 import { SlOptionsVertical } from "react-icons/sl";
 import { MdSimCardDownload, MdStar, MdDelete } from "react-icons/md";
-import {
-  DocumentData,
-  QueryDocumentSnapshot,
-  deleteDoc,
-  doc,
-  updateDoc,
-} from "firebase/firestore";
+import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { firestoreData } from "./NewItem";
 import { firestoreDb } from "@/lib/utils/firebaseConfig";
 import toast, { Toaster } from "react-hot-toast";
