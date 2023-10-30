@@ -16,13 +16,14 @@ export type receivedMetadata = {
   user_name: string;
 };
 
-export type firestoreData = {
+export interface firestoreData {
+  id: string;
   name: string;
   user: string;
   contentType: string;
   size: number;
   isStarred: boolean;
-};
+}
 
 const NewItem = () => {
   const { folName, setFolName } = FolderNameStore();
