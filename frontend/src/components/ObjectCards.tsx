@@ -15,7 +15,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { usePathname } from "next/navigation";
 
 type ObjectCardsProps = {
-  data: QueryDocumentSnapshot<DocumentData, DocumentData>[] | undefined;
+  data: Array<firestoreData>;
 };
 
 const starNotify = () =>
@@ -118,18 +118,17 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
       {data?.map((obj) => {
         let imageSrc;
         let smImageSrc;
-        let objectData = obj.data() as firestoreData;
 
-        if (objectData.contentType.startsWith("image")) {
+        if (obj.contentType.startsWith("image")) {
           imageSrc = "/image-lg.png";
           smImageSrc = "/image-sm.png";
-        } else if (objectData.contentType === "application/pdf") {
+        } else if (obj.contentType === "application/pdf") {
           imageSrc = "/pdf-lg.png";
           smImageSrc = "/pdf-sm.png";
-        } else if (objectData.contentType.startsWith("video")) {
+        } else if (obj.contentType.startsWith("video")) {
           imageSrc = "/mp4-lg.png";
           smImageSrc = "/mp4-sm.png";
-        } else if (objectData.contentType.startsWith("audio")) {
+        } else if (obj.contentType.startsWith("audio")) {
           imageSrc = "/music-lg.png";
           smImageSrc = "/music-sm.png";
         } else {
@@ -142,7 +141,7 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
             <Toaster position="bottom-left" reverseOrder={false} />
             <div
               className="w-full bg-custom-nav px-3 pt-2 pb-3 rounded-xl h-52 flex flex-col gap-2 group one-edge-box-shadow hover:-translate-y-1 transition-all duration-300 ease-in-out"
-              onDoubleClick={() => downloadObject(objectData.name)}
+              onDoubleClick={() => downloadObject(obj.name)}
             >
               <div className="flex gap-2 px-2 py-2 items-center justify-between">
                 <Image
@@ -153,19 +152,16 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
                   className="w-5"
                 />
                 <h3 className="text-[#e6e6e6] text-sm font-medium group-hover:text-blue-400 transition-all duration-300 ease-in-out">
-                  {objectData.name.substring(
-                    objectData.name.indexOf("/") + 1,
-                    objectData.name.length
+                  {obj.name.substring(
+                    obj.name.indexOf("/") + 1,
+                    obj.name.length
                   ).length > 13
-                    ? objectData.name
-                        .substring(
-                          objectData.name.indexOf("/") + 1,
-                          objectData.name.length
-                        )
+                    ? obj.name
+                        .substring(obj.name.indexOf("/") + 1, obj.name.length)
                         .substring(0, 13) + "..."
-                    : objectData.name.substring(
-                        objectData.name.indexOf("/") + 1,
-                        objectData.name.length
+                    : obj.name.substring(
+                        obj.name.indexOf("/") + 1,
+                        obj.name.length
                       )}
                 </h3>
                 <div className="dropdown dropdown-end md:translate-x-[14.8px]">
@@ -182,7 +178,7 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
                     <li>
                       <label
                         className="flex gap-6 items-center"
-                        onClick={() => downloadObject(objectData.name)}
+                        onClick={() => downloadObject(obj.name)}
                       >
                         <MdSimCardDownload size={"1.5em"} />
                         <h5>Download</h5>
@@ -210,7 +206,7 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
                     <li>
                       <label
                         className="flex gap-6 items-center"
-                        onClick={() => deleteObject(objectData.name, obj.id)}
+                        onClick={() => deleteObject(obj.name, obj.id)}
                       >
                         <MdDelete size={"1.5em"} />
                         <h5>Delete</h5>
