@@ -1,13 +1,14 @@
 "use client";
 import { collectionRef } from "@/lib/utils/firebaseConfig";
-import { orderBy, query, where } from "firebase/firestore";
+import { onSnapshot, orderBy, query, where } from "firebase/firestore";
 import { useSession } from "next-auth/react";
-import { useCollection } from "react-firebase-hooks/firestore";
 import { firestoreData } from "./NewItem";
 import Image from "next/image";
 import bytes from "bytes";
 import { FaSortNumericDownAlt, FaSortNumericUpAlt } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { firestoreDataWithoutID } from "./MyDriveContent";
+import { ResultsStore } from "@/context/MyDriveDataContext";
 
 enum OrderBy {
   Asc = "asc",
@@ -17,6 +18,7 @@ enum OrderBy {
 const StorageList = () => {
   const { data: session } = useSession();
   const [isDesc, setIsDesc] = useState(true);
+  const { results, setResults } = ResultsStore();
 
   const username = session?.user?.email?.split("@")[0] || "";
 
@@ -26,7 +28,25 @@ const StorageList = () => {
     orderBy("size", isDesc ? OrderBy.Desc : OrderBy.Asc)
   );
 
-  const [snapshot, loading, error] = useCollection(q);
+  useEffect(() => {
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      let updatedResults: Array<firestoreData> = [];
+
+      snapshot.docs.forEach((doc) => {
+        const data = {
+          id: doc.id,
+          ...(doc.data() as firestoreDataWithoutID),
+        };
+        updatedResults.push(data);
+      });
+
+      setResults(updatedResults);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   return (
     <div>
@@ -44,17 +64,16 @@ const StorageList = () => {
           </tr>
         </thead>
         <tbody>
-          {snapshot?.docs.map((file) => {
+          {results.map((file) => {
             let smImageSrc: string;
-            const fileData = file.data() as firestoreData;
 
-            if (fileData.contentType.startsWith("image")) {
+            if (file.contentType.startsWith("image")) {
               smImageSrc = "/image-sm.png";
-            } else if (fileData.contentType === "application/pdf") {
+            } else if (file.contentType === "application/pdf") {
               smImageSrc = "/pdf-sm.png";
-            } else if (fileData.contentType.startsWith("video")) {
+            } else if (file.contentType.startsWith("video")) {
               smImageSrc = "/mp4-sm.png";
-            } else if (fileData.contentType.startsWith("audio")) {
+            } else if (file.contentType.startsWith("audio")) {
               smImageSrc = "/music-sm.png";
             } else {
               smImageSrc = "/docs-sm.png";
@@ -72,24 +91,24 @@ const StorageList = () => {
                   />
 
                   <h3>
-                    {fileData.name.substring(
-                      fileData.name.indexOf("/") + 1,
-                      fileData.name.length
+                    {file.name.substring(
+                      file.name.indexOf("/") + 1,
+                      file.name.length
                     ).length > 45
-                      ? fileData.name
+                      ? file.name
                           .substring(
-                            fileData.name.indexOf("/") + 1,
-                            fileData.name.length
+                            file.name.indexOf("/") + 1,
+                            file.name.length
                           )
                           .substring(0, 45) + "..."
-                      : fileData.name.substring(
-                          fileData.name.indexOf("/") + 1,
-                          fileData.name.length
+                      : file.name.substring(
+                          file.name.indexOf("/") + 1,
+                          file.name.length
                         )}
                   </h3>
                 </td>
                 <td className="p-4">
-                  {bytes.format(fileData.size, { unitSeparator: " " })}
+                  {bytes.format(file.size, { unitSeparator: " " })}
                 </td>
               </tr>
             );

@@ -1,22 +1,42 @@
 "use client";
+import { firestoreDataWithoutID } from "@/components/MyDriveContent";
+import { firestoreData } from "@/components/NewItem";
 import ObjectCards from "@/components/ObjectCards";
+import { ResultsStore } from "@/context/MyDriveDataContext";
 import { collectionRef } from "@/lib/utils/firebaseConfig";
-import { query, where } from "firebase/firestore";
+import { onSnapshot, query, where } from "firebase/firestore";
 import { useSession } from "next-auth/react";
-import { useCollection } from "react-firebase-hooks/firestore";
+import { useEffect } from "react";
 
 export default function StarredPage() {
   const { data: session } = useSession();
+  const { results, setResults } = ResultsStore();
   const username = session?.user?.email?.split("@")[0] || "";
   const q = query(
     collectionRef,
     where("isStarred", "==", true),
     where("user", "==", username)
   );
-  const [snapshot, loading, error] = useCollection(q);
-  snapshot?.docs.forEach((doc) => {
-    console.log("Data from Starred Page : ", doc.data());
-  });
+  useEffect(() => {
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      let updatedResults: Array<firestoreData> = [];
+
+      snapshot.docs.forEach((doc) => {
+        const data = {
+          id: doc.id,
+          ...(doc.data() as firestoreDataWithoutID),
+        };
+
+        updatedResults.push(data);
+      });
+
+      setResults(updatedResults);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   return (
     <div className="px-8 py-7 flex flex-col gap-6">
@@ -24,7 +44,7 @@ export default function StarredPage() {
         Starred Files
       </div>
       <div className="grid md:grid-cols-5 sm:grid-cols-3 grid-cols-2 gap-4">
-        <ObjectCards data={snapshot?.docs} />
+        <ObjectCards data={results} />
       </div>
     </div>
   );
