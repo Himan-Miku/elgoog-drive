@@ -2,21 +2,21 @@
 import Logout from "./Logout";
 import { useSession } from "next-auth/react";
 import algoliasearch from "algoliasearch/lite";
-import { useState } from "react";
 import { firestoreData } from "./NewItem";
+import { AlgoliaStore } from "@/context/AlgoliaContext";
 
-interface SearchResultItem {
+interface SearchResultData {
   readonly objectID: string;
-  readonly _highlightResult?: {} | undefined;
-  readonly _snippetResult?: {} | undefined;
-  readonly _distinctSeqID?: number | undefined;
+  path: string;
+  lastModified: number;
 }
+
+interface SearchResultItem extends SearchResultData, firestoreData {}
 
 type SearchResults = SearchResultItem[];
 
 const Navbar = () => {
-  const [query, setQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<SearchResults>([]);
+  const { query, searchResults, setQuery, setSearchResults } = AlgoliaStore();
   const { data: session } = useSession();
 
   const searchClient = algoliasearch(
@@ -33,7 +33,7 @@ const Navbar = () => {
 
     try {
       const result = await index.search(query);
-      setSearchResults(result.hits);
+      setSearchResults(result.hits as SearchResults);
     } catch (error) {
       console.error("Error Searching with Algolia : ", error);
     }
