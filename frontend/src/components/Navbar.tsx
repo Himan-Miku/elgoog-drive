@@ -13,10 +13,10 @@ interface SearchResultData {
 
 interface SearchResultItem extends SearchResultData, firestoreData {}
 
-type SearchResults = SearchResultItem[];
+export type SearchResults = SearchResultItem[];
 
 const Navbar = () => {
-  const { query, searchResults, setQuery, setSearchResults } = AlgoliaStore();
+  const { queryy, searchResults, setQueryy, setSearchResults } = AlgoliaStore();
   const { data: session } = useSession();
 
   const searchClient = algoliasearch(
@@ -26,13 +26,13 @@ const Navbar = () => {
   const index = searchClient.initIndex("objects");
 
   async function search() {
-    if (query.trim() === "") {
+    if (queryy.trim() === "") {
       setSearchResults([]);
       return;
     }
 
     try {
-      const result = await index.search(query);
+      const result = await index.search(queryy);
       setSearchResults(result.hits as SearchResults);
     } catch (error) {
       console.error("Error Searching with Algolia : ", error);
@@ -59,8 +59,8 @@ const Navbar = () => {
           type="search"
           className="w-full focus:outline-none caret-white bg-custom-backg font-semibold text-[#e6e6e6] placeholder:font-semibold"
           placeholder="Search in Drive"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          value={queryy}
+          onChange={(e) => setQueryy(e.target.value)}
           onKeyUp={search}
         />
       </div>
