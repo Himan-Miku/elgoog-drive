@@ -33,6 +33,7 @@ async fn get_metadata(metadata: web::Json<Metadata>) -> impl Responder {
         name,
         content_type,
         user,
+        sent_from,
         ..
     } = metadata.into_inner();
     let actual_name = name.split('.').collect::<Vec<&str>>();
@@ -42,13 +43,30 @@ async fn get_metadata(metadata: web::Json<Metadata>) -> impl Responder {
         .take(6)
         .collect::<String>();
     let user_name = user.split("@").collect::<Vec<&str>>();
-    let formated_string = format!(
-        "{}/{}-{}.{}",
-        user_name.first().unwrap(),
-        actual_name.first().unwrap(),
-        new_uuid,
-        actual_name.last().unwrap()
-    );
+
+    let formated_string: String;
+
+    if sent_from.eq("/") {
+        formated_string = format!(
+            "{}/{}-{}.{}",
+            user_name.first().unwrap(),
+            actual_name.first().unwrap(),
+            new_uuid,
+            actual_name.last().unwrap()
+        );
+    } else {
+        let inner_folder = sent_from.split("/").collect::<Vec<&str>>();
+
+        formated_string = format!(
+            "{}/{}/{}-{}.{}",
+            user_name.first().unwrap(),
+            inner_folder.last().unwrap().replace("%20", " "),
+            actual_name.first().unwrap(),
+            new_uuid,
+            actual_name.last().unwrap()
+        );
+    }
+
     let obj_key = formated_string.as_str();
     let presigned_put_uri =
         put_object_uri(&client, "elgoog-drive", obj_key, content_type.as_str(), 60)
@@ -134,6 +152,22 @@ async fn remove_object(path: web::Path<(String, String)>) -> impl Responder {
     HttpResponse::Ok().body("Object Deleted")
 }
 
+#[delete("/api/deleteFolder/{user}/{object_key}")]
+async fn remove_folder(path: web::Path<(String, String)>) -> impl Responder {
+    let (user, object_key) = path.into_inner();
+
+    let key = format!("{}/{}/", user, object_key);
+
+    let shared_config = aws_config::load_from_env().await;
+    let client = Client::new(&shared_config);
+
+    delete_object_using_key(&client, "elgoog-drive", &key)
+        .await
+        .unwrap();
+
+    HttpResponse::Ok().body("Folder Deleted")
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
@@ -146,6 +180,7 @@ async fn main() -> std::io::Result<()> {
             .service(get_metadata)
             .service(get_objects)
             .service(remove_object)
+            .service(remove_folder)
             .service(download_object)
     })
     .bind("localhost:8000")?
