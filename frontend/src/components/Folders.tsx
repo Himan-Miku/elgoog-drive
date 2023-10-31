@@ -1,42 +1,53 @@
+"use client";
+import { useSession } from "next-auth/react";
 import FoldersContent from "./FoldersContent";
-import { getServerSession } from "next-auth";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { firestoreDb } from "@/lib/utils/firebaseConfig";
+import { FolderData } from "./NewItem";
+import { useEffect, useState } from "react";
 
-export type foldersData = {
-  folders_vec: Array<string>;
+type FolderID = {
+  id: string;
 };
 
-const fetchFolders = async () => {
-  let session = await getServerSession();
+export type FolderDataWithID = FolderData & FolderID;
 
-  let name = session?.user?.email?.split("@")[0];
-  try {
-    const res = await fetch(
-      `http://localhost:8000/api/fetchFolders?name=${name}`
-    );
-    if (res.ok) {
-      const data = (await res.json()) as foldersData;
-      console.log(data);
-      return data;
-    } else {
-      console.error("Fetch failed with status:", res.status);
-      throw new Error("Fetch failed");
-    }
-  } catch (error) {
-    console.error("Fetch error:", error);
-    throw error;
-  }
-};
+export default function Folders() {
+  const [folderData, setFolderData] = useState<Array<FolderDataWithID>>([]);
+  const { data: session } = useSession();
+  let user_name = session?.user?.email?.split("@")[0] || "";
 
-export default async function Folders() {
-  const data = await fetchFolders();
+  const q = query(
+    collection(firestoreDb, "folders"),
+    where("user", "==", user_name)
+  );
 
-  console.log("data from fn : ", data);
+  useEffect(() => {
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      let updatedData: Array<FolderDataWithID> = [];
+
+      snapshot.docs.forEach((doc) => {
+        const data = {
+          id: doc.id,
+          ...(doc.data() as FolderData),
+        };
+
+        updatedData.push(data);
+      });
+
+      setFolderData(updatedData);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   return (
     <>
       <div className="px-11 py-2 font-semibold text-[#e6e6e6]">Folders</div>
       <div className="flex gap-6 px-8 py-3">
-        <FoldersContent data={data} />
+        <FoldersContent data={folderData} />
       </div>
     </>
   );
