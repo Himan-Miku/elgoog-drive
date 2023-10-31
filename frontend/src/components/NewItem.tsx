@@ -7,13 +7,18 @@ import {
   MdOutlineUploadFile,
   MdOutlineDriveFolderUpload,
 } from "react-icons/md";
-import { addDoc } from "firebase/firestore";
-import { collectionRef } from "@/lib/utils/firebaseConfig";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { collectionRef, firestoreDb } from "@/lib/utils/firebaseConfig";
 
 export type receivedMetadata = {
   obj_key: string;
   presigned_put_uri: string;
   user_name: string;
+};
+
+export type FolderData = {
+  folderName: string;
+  user: string;
 };
 
 export interface firestoreData {
@@ -157,8 +162,9 @@ const NewItem = () => {
                     e.preventDefault();
                     console.log(folName);
 
-                    const folderData = {
+                    const folderData: FolderData = {
                       folderName: folName,
+                      user: session?.user?.email!,
                     };
 
                     try {
@@ -174,8 +180,14 @@ const NewItem = () => {
                       );
 
                       if (response.ok) {
-                        const res = await response.text();
+                        const res = (await response.json()) as FolderData;
                         console.log(res);
+
+                        await addDoc(collection(firestoreDb, "folders"), {
+                          folderName: res.folderName,
+                          user: res.user,
+                          createdAt: serverTimestamp(),
+                        });
                       } else {
                         console.log(response.status);
                       }
