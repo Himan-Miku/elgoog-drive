@@ -13,6 +13,7 @@ pub struct Metadata {
 pub struct FolderName {
     #[serde(rename = "folderName")]
     pub folder_name: String,
+    pub user: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
