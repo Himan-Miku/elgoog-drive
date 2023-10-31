@@ -7,11 +7,12 @@ pub async fn show_folders(
     user: &String,
 ) -> Result<Vec<String>, Error> {
     let mut folders: Vec<String> = Vec::new();
+    let prefix = format!("{}/", user);
 
     let objects = client
         .list_objects_v2()
         .bucket(bucket)
-        .prefix(user)
+        .prefix(&prefix)
         .delimiter("/")
         .send()
         .await?;
@@ -19,7 +20,8 @@ pub async fn show_folders(
         let folder_name = obj.prefix().unwrap();
         folders.push(folder_name.to_owned());
     }
-    println!("folders : {:?}", folders);
+
+    println!("Folders: {:?}", folders);
 
     Ok(folders)
 }
