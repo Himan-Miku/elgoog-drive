@@ -93,9 +93,12 @@ async fn download_object(key_json: web::Json<DownloadObj>) -> impl Responder {
 
 #[post("/api/createFolder")]
 async fn create_folder(folder_name: web::Json<FolderName>) -> impl Responder {
-    let FolderName { folder_name } = folder_name.into_inner();
+    let FolderName { folder_name, user } = folder_name.into_inner();
 
-    let folder_name = format!("{}/", folder_name);
+    let user_name = user.split("@").collect::<Vec<&str>>();
+    let user_name = user_name.first().unwrap();
+
+    let folder_name = format!("{}/{}/", user_name, folder_name);
     let folder_name_str = folder_name.as_str();
 
     let shared_config = aws_config::load_from_env().await;
@@ -105,9 +108,14 @@ async fn create_folder(folder_name: web::Json<FolderName>) -> impl Responder {
         .await
         .unwrap();
 
-    println!("folder name: {}", folder_name);
+    let folder_data = FolderName {
+        folder_name,
+        user: user_name.to_string(),
+    };
 
-    HttpResponse::Created().json(folder_name)
+    println!("folder data to send: {:?}", &folder_data);
+
+    HttpResponse::Created().json(folder_data)
 }
 
 #[delete("/api/deleteObject/{user}/{object_key}")]
