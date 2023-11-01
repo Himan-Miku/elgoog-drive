@@ -1,3 +1,4 @@
+use aws_sdk_s3::types::{Delete, ObjectIdentifier};
 use aws_sdk_s3::{presigning::PresigningConfig, Client, Error};
 use std::time::Duration;
 
@@ -44,6 +45,32 @@ pub async fn list_all_objects(
     println!("obj_vec : {:?}", obj_vec);
 
     Ok(obj_vec)
+}
+
+pub async fn delete_objects(
+    client: &Client,
+    bucket: &str,
+    objects: Vec<String>,
+) -> Result<(), Error> {
+    let mut delete_objects: Vec<ObjectIdentifier> = vec![];
+
+    for obj in objects {
+        let obj_id = ObjectIdentifier::builder().set_key(Some(obj)).build();
+        delete_objects.push(obj_id);
+    }
+
+    let delete = Delete::builder().set_objects(Some(delete_objects)).build();
+
+    client
+        .delete_objects()
+        .bucket(bucket)
+        .delete(delete)
+        .send()
+        .await?;
+
+    println!("Objects deleted.");
+
+    Ok(())
 }
 
 pub async fn delete_object_using_key(
