@@ -23,7 +23,7 @@ const starNotify = () =>
     },
   });
 
-const deleteNotify = () =>
+export const deleteNotify = () =>
   toast("Item Deleted", {
     icon: "🗑️",
     duration: 4000,
