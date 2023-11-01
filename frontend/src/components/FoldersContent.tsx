@@ -3,15 +3,62 @@ import Link from "next/link";
 import { FaFolder } from "react-icons/fa6";
 import { SlOptionsVertical } from "react-icons/sl";
 import { FolderDataWithID } from "./Folders";
-import { deleteDoc, doc } from "firebase/firestore";
-import { firestoreDb } from "@/lib/utils/firebaseConfig";
+import {
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  where,
+  writeBatch,
+} from "firebase/firestore";
+import { collectionRef, firestoreDb } from "@/lib/utils/firebaseConfig";
 import { deleteNotify } from "./ObjectCards";
+import { firestoreDataWithoutID } from "./MyDriveContent";
 
 interface FoldersContentProps {
   data: Array<FolderDataWithID>;
 }
 
 const FoldersContent = ({ data }: FoldersContentProps) => {
+  const delete_docs_firestore = async (fName: string) => {
+    let documentIDs: Array<string> = [];
+    const username = data[0].user || "";
+
+    const q = query(collectionRef, where("user", "==", username));
+
+    const objectsData = await getDocs(q);
+
+    objectsData.forEach((doc) => {
+      const objectdata = {
+        id: doc.id,
+        ...(doc.data() as firestoreDataWithoutID),
+      };
+      if (objectdata.name.startsWith(fName)) {
+        console.log("Folders starting with fName: ", objectdata.name);
+
+        documentIDs.push(objectdata.id);
+      }
+    });
+
+    console.log("Document ID Vec : ", documentIDs);
+
+    const batch = writeBatch(firestoreDb);
+
+    documentIDs.forEach((docId) => {
+      const docRef = doc(firestoreDb, "objects", docId);
+      batch.delete(docRef);
+    });
+
+    await batch
+      .commit()
+      .then(() => {
+        console.log("Documents successfully deleted.");
+      })
+      .catch((error) => {
+        console.error("Error deleting documents: ", error);
+      });
+  };
+
   const deleteFolder = async (folderId: string, folderName: string) => {
     let folName = folderName.replace(/\/$/, "");
     const res = await fetch(
@@ -22,7 +69,7 @@ const FoldersContent = ({ data }: FoldersContentProps) => {
     );
     if (res.ok) {
       console.log(await res.text());
-
+      await delete_docs_firestore(folderName);
       await deleteDoc(doc(firestoreDb, "folders", folderId));
     } else {
       console.log(res.text);
