@@ -95,11 +95,25 @@ const FoldersContent = ({ data }: FoldersContentProps) => {
                 <h3>{actualFolderName}</h3>
               </div>
             </Link>
-            <div
-              onClick={() => deleteFolder(folName.id, folName.folderName)}
-              className="rounded-full p-1 hover:bg-custom-backg"
-            >
-              <SlOptionsVertical />
+            <div className="dropdown dropdown-top dropdown-end">
+              <label tabIndex={0}>
+                <div className="rounded-full p-1 hover:bg-custom-backg">
+                  <SlOptionsVertical />
+                </div>
+              </label>
+              <ul
+                tabIndex={0}
+                className="dropdown-content z-[1] menu shadow bg-custom-backg rounded-box font-semibold mb-4 translate-x-4"
+              >
+                <li>
+                  <button
+                    onClick={() => deleteFolder(folName.id, folName.folderName)}
+                    className="text-custom-green"
+                  >
+                    Delete
+                  </button>
+                </li>
+              </ul>
             </div>
           </div>
         );
