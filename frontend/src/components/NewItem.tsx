@@ -9,11 +9,13 @@ import {
 } from "react-icons/md";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { collectionRef, firestoreDb } from "@/lib/utils/firebaseConfig";
+import { usePathname } from "next/navigation";
 
 export type receivedMetadata = {
   obj_key: string;
   presigned_put_uri: string;
   user_name: string;
+  sent_from: string;
 };
 
 export type FolderData = {
@@ -33,6 +35,7 @@ export interface firestoreData {
 const NewItem = () => {
   const { folName, setFolName } = FolderNameStore();
   const { data: session, status } = useSession();
+  const pathname = usePathname();
 
   return (
     <>
@@ -63,6 +66,7 @@ const NewItem = () => {
                       contentType: file.type,
                       size: file.size,
                       user: session?.user?.email,
+                      sentFrom: pathname,
                     };
 
                     try {
@@ -102,6 +106,7 @@ const NewItem = () => {
                               size: file.size,
                               contentType: file.type,
                               isStarred: false,
+                              sentFrom: uri_data.sent_from,
                             });
                           } else {
                             console.log("Error uploading file.");
