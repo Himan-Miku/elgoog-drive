@@ -7,8 +7,8 @@ use structs::structs::{
     DownloadObj, FolderName, FoldersArray, GetObjectsParams, Metadata, SentMetadata,
 };
 use utils::s3::{
-    create_folder_for_s3, delete_object_using_key, get_object_uri, list_all_objects,
-    put_object_uri, show_folders,
+    create_folder_for_s3, delete_object_using_key, delete_objects, get_object_uri,
+    list_all_objects, put_object_uri, show_folders,
 };
 
 mod structs;
@@ -77,6 +77,7 @@ async fn get_metadata(metadata: web::Json<Metadata>) -> impl Responder {
         obj_key: formated_string,
         presigned_put_uri,
         user_name: user_name[0].clone().to_string(),
+        sent_from,
     };
 
     HttpResponse::Created().json(sent_metadata)
@@ -156,16 +157,21 @@ async fn remove_object(path: web::Path<(String, String)>) -> impl Responder {
 async fn remove_folder(path: web::Path<(String, String)>) -> impl Responder {
     let (user, object_key) = path.into_inner();
 
-    let key = format!("{}/{}/", user, object_key);
+    let folder_key = format!("{}/{}/", user, object_key);
 
     let shared_config = aws_config::load_from_env().await;
     let client = Client::new(&shared_config);
 
-    delete_object_using_key(&client, "elgoog-drive", &key)
+    let mut obj_vec = list_all_objects(&client, "elgoog-drive", &folder_key)
+        .await
+        .unwrap();
+    obj_vec.push(folder_key);
+
+    delete_objects(&client, "elgoog-drive", obj_vec)
         .await
         .unwrap();
 
-    HttpResponse::Ok().body("Folder Deleted")
+    HttpResponse::Ok().body("Folder Deleted with its files")
 }
 
 #[actix_web::main]
