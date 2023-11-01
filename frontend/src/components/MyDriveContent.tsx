@@ -19,7 +19,7 @@ export interface firestoreDataWithoutID {
 const MyDriveContent = () => {
   let renderingResults;
   const { results, setResults } = ResultsStore();
-  const { queryy, setQueryy, searchResults, setSearchResults } = AlgoliaStore();
+  const { queryy, searchResults } = AlgoliaStore();
   const { data: session } = useSession();
   let username = session?.user?.email?.split("@")[0] || "";
 
