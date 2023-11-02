@@ -46,21 +46,21 @@ async fn get_metadata(metadata: web::Json<Metadata>) -> impl Responder {
 
     let formated_string: String;
 
-    if sent_from.eq("/") {
-        formated_string = format!(
-            "{}/{}-{}.{}",
-            user_name.first().unwrap(),
-            actual_name.first().unwrap(),
-            new_uuid,
-            actual_name.last().unwrap()
-        );
-    } else {
+    if sent_from.starts_with("/folders/") {
         let inner_folder = sent_from.split("/").collect::<Vec<&str>>();
 
         formated_string = format!(
             "{}/{}/{}-{}.{}",
             user_name.first().unwrap(),
             inner_folder.last().unwrap().replace("%20", " "),
+            actual_name.first().unwrap(),
+            new_uuid,
+            actual_name.last().unwrap()
+        );
+    } else {
+        formated_string = format!(
+            "{}/{}-{}.{}",
+            user_name.first().unwrap(),
             actual_name.first().unwrap(),
             new_uuid,
             actual_name.last().unwrap()
