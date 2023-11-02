@@ -2,12 +2,13 @@
 import ObjectCards from "@/components/ObjectCards";
 import { collectionRef } from "@/lib/utils/firebaseConfig";
 import { onSnapshot, query, where } from "firebase/firestore";
-import { IoCaretDown } from "react-icons/io5";
+import { IoCaretForward } from "react-icons/io5";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { firestoreData } from "@/components/NewItem";
 import { firestoreDataWithoutID } from "@/components/MyDriveContent";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 const FolderPage = () => {
   const { data: session } = useSession();
@@ -47,15 +48,19 @@ const FolderPage = () => {
 
   return (
     <div className="pt-5 px-8 flex flex-col gap-3">
-      <div className="p-2 flex gap-2 items-center justify-center w-52 min-w-fit text-xl font-semibold">
-        <h5 className="text-custom-green">My Drive / </h5>
-        <div className="flex gap-1 items-center justify-center hover:bg-custom-nav px-2 rounded-lg">
-          <h5 className="text-custom-blue">{folName}</h5>
-          <IoCaretDown />
+      <div className="p-2 flex items-center justify-center w-52 min-w-fit text-xl font-semibold">
+        <Link href={"/"}>
+          <h5 className="text-custom-green p-2 hover:bg-custom-nav rounded-xl cursor-pointer">
+            My Drive /{" "}
+          </h5>
+        </Link>
+        <div className="flex text-custom-blue gap-1 items-center justify-center hover:bg-custom-nav p-2 rounded-xl cursor-pointer">
+          <h5>{folName}</h5>
+          <IoCaretForward />
         </div>
       </div>
       <div className="py-2 grid md:grid-cols-5 sm:grid-cols-3 grid-cols-2 gap-4">
-        <ObjectCards data={folderNameData} />
+        <ObjectCards data={folderNameData} forFolders={true} />
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import { usePathname } from "next/navigation";
 
 type ObjectCardsProps = {
   data: Array<firestoreData>;
+  forFolders?: boolean;
 };
 
 const starNotify = () =>
@@ -104,7 +105,7 @@ const UnstarObject = async (docId: string) => {
   unstarNotify();
 };
 
-const ObjectCards = ({ data }: ObjectCardsProps) => {
+const ObjectCards = ({ data, forFolders }: ObjectCardsProps) => {
   const pathname = usePathname();
 
   return (
@@ -146,10 +147,22 @@ const ObjectCards = ({ data }: ObjectCardsProps) => {
                   className="w-5"
                 />
                 <h3 className="text-[#e6e6e6] text-sm font-medium group-hover:text-blue-400 transition-all duration-300 ease-in-out">
-                  {obj.name.substring(
-                    obj.name.indexOf("/") + 1,
-                    obj.name.length
-                  ).length > 13
+                  {forFolders
+                    ? obj.name.substring(
+                        obj.name.indexOf("/", obj.name.indexOf("/") + 1) + 1
+                      ).length > 13
+                      ? obj.name
+                          .substring(
+                            obj.name.indexOf("/", obj.name.indexOf("/") + 1) + 1
+                          )
+                          .substring(0, 13) + "..."
+                      : obj.name.substring(
+                          obj.name.indexOf("/", obj.name.indexOf("/") + 1) + 1
+                        )
+                    : obj.name.substring(
+                        obj.name.indexOf("/") + 1,
+                        obj.name.length
+                      ).length > 13
                     ? obj.name
                         .substring(obj.name.indexOf("/") + 1, obj.name.length)
                         .substring(0, 13) + "..."
