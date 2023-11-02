@@ -8,7 +8,7 @@ import bytes from "bytes";
 import { FaSortNumericDownAlt, FaSortNumericUpAlt } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { firestoreDataWithoutID } from "./MyDriveContent";
-import { ResultsStore } from "@/context/MyDriveDataContext";
+import { ListResultsStore } from "@/context/ListResultsContext";
 
 enum OrderBy {
   Asc = "asc",
@@ -18,7 +18,7 @@ enum OrderBy {
 const StorageList = () => {
   const { data: session } = useSession();
   const [isDesc, setIsDesc] = useState(true);
-  const { results, setResults } = ResultsStore();
+  const { listResults, setListResults } = ListResultsStore();
 
   const username = session?.user?.email?.split("@")[0] || "";
 
@@ -40,7 +40,7 @@ const StorageList = () => {
         updatedResults.push(data);
       });
 
-      setResults(updatedResults);
+      setListResults(updatedResults);
     });
 
     return () => {
@@ -64,7 +64,7 @@ const StorageList = () => {
           </tr>
         </thead>
         <tbody>
-          {results.map((file) => {
+          {listResults.map((file) => {
             let smImageSrc: string;
 
             if (file.contentType.startsWith("image")) {
