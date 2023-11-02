@@ -1,5 +1,5 @@
 use actix_cors::Cors;
-use actix_web::{delete, get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{delete, get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 use aws_sdk_s3::Client;
 use uuid::Uuid;
 
@@ -137,11 +137,25 @@ async fn create_folder(folder_name: web::Json<FolderName>) -> impl Responder {
     HttpResponse::Created().json(folder_data)
 }
 
-#[delete("/api/deleteObject/{user}/{object_key}")]
-async fn remove_object(path: web::Path<(String, String)>) -> impl Responder {
-    let (user, object_key) = path.into_inner();
+#[delete("/api/deleteObject/{path:.+}")]
+async fn remove_object(req: HttpRequest) -> Result<HttpResponse, actix_web::Error> {
+    let path = req.match_info().get("path").unwrap_or("");
+    let parts: Vec<&str> = path.split('/').collect();
 
-    let key = format!("{}/{}", user, object_key);
+    let mut key = String::new();
+
+    if parts.len() == 3 {
+        let user = parts[0];
+        let folder_name = parts[1];
+        let object_key = parts[2];
+
+        key = format!("{}/{}/{}", user, folder_name, object_key);
+    } else if parts.len() == 2 {
+        let user = parts[0];
+        let object_key = parts[1];
+
+        key = format!("{}/{}", user, object_key);
+    }
 
     let shared_config = aws_config::load_from_env().await;
     let client = Client::new(&shared_config);
@@ -150,7 +164,7 @@ async fn remove_object(path: web::Path<(String, String)>) -> impl Responder {
         .await
         .unwrap();
 
-    HttpResponse::Ok().body("Object Deleted")
+    Ok(HttpResponse::Ok().body("Object Deleted"))
 }
 
 #[delete("/api/deleteFolder/{user}/{object_key}")]
