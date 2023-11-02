@@ -2,7 +2,7 @@
 import { firestoreDataWithoutID } from "@/components/MyDriveContent";
 import { firestoreData } from "@/components/NewItem";
 import ObjectCards from "@/components/ObjectCards";
-import { ResultsStore } from "@/context/MyDriveDataContext";
+import { StarredResultsStore } from "@/context/StarredResultsContext";
 import { collectionRef } from "@/lib/utils/firebaseConfig";
 import { onSnapshot, query, where } from "firebase/firestore";
 import { useSession } from "next-auth/react";
@@ -10,7 +10,7 @@ import { useEffect } from "react";
 
 export default function StarredPage() {
   const { data: session } = useSession();
-  const { results, setResults } = ResultsStore();
+  const { setStarredResults, starredResults } = StarredResultsStore();
   const username = session?.user?.email?.split("@")[0] || "";
   const q = query(
     collectionRef,
@@ -30,7 +30,7 @@ export default function StarredPage() {
         updatedResults.push(data);
       });
 
-      setResults(updatedResults);
+      setStarredResults(updatedResults);
     });
 
     return () => {
@@ -43,9 +43,16 @@ export default function StarredPage() {
       <div className="text-custom-green text-xl font-semibold px-1 tracking-wide">
         Starred Files
       </div>
-      <div className="grid md:grid-cols-5 sm:grid-cols-3 grid-cols-2 gap-4">
-        <ObjectCards data={results} />
-      </div>
+
+      {starredResults.length != 0 ? (
+        <div className="grid md:grid-cols-5 sm:grid-cols-3 grid-cols-2 gap-4">
+          <ObjectCards data={starredResults} />
+        </div>
+      ) : (
+        <h6 className="font-medium text-gray-500 text-2xl px-1">
+          No Files Starred 💫
+        </h6>
+      )}
     </div>
   );
 }
