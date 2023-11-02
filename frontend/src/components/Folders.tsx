@@ -46,8 +46,15 @@ export default function Folders() {
   return (
     <>
       <div className="px-11 py-2 font-semibold text-[#e6e6e6]">Folders</div>
+
       <div className="flex gap-6 px-8 py-3">
-        <FoldersContent data={folderData} />
+        {folderData.length === 0 ? (
+          <div className="px-3 py-2 text-2xl font-medium text-gray-500">
+            No Folders Created 📂
+          </div>
+        ) : (
+          <FoldersContent data={folderData} />
+        )}
       </div>
     </>
   );
