@@ -10,10 +10,12 @@ import {
 } from "react-icons/md";
 import { receivedMetadata } from "./NewItem";
 import { FolderNameStore } from "@/context/FolderNameContext";
+import { usePathname } from "next/navigation";
 
 const MyDrive = () => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const { folName, setFolName } = FolderNameStore();
+  const pathname = usePathname();
 
   return (
     <div className="pt-5 px-8">
@@ -44,6 +46,7 @@ const MyDrive = () => {
                       contentType: file.type,
                       size: file.size,
                       user: session?.user?.email,
+                      sentFrom: pathname,
                     };
 
                     try {
@@ -83,6 +86,7 @@ const MyDrive = () => {
                               size: file.size,
                               contentType: file.type,
                               isStarred: false,
+                              sentFrom: uri_data.sent_from,
                             });
                           } else {
                             console.log("Error uploading file.");
