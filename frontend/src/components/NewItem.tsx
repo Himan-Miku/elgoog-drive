@@ -34,7 +34,7 @@ export interface firestoreData {
 
 const NewItem = () => {
   const { folName, setFolName } = FolderNameStore();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const pathname = usePathname();
 
   return (
@@ -51,99 +51,185 @@ const NewItem = () => {
           tabIndex={0}
           className="dropdown-content z-[1] menu p-2 shadow bg-custom-backg rounded-box w-[13.5rem] mt-[1.3rem] text-custom-green"
         >
-          <li>
-            <label className="flex gap-6 items-center">
-              <input
-                type="file"
-                onChange={async (e) => {
-                  if (e.target.files && e.target.files.length > 0) {
-                    console.log(e.target.files[0]);
+          {pathname.startsWith("/folders/") ? (
+            <li>
+              <label className="flex gap-6 items-center">
+                <input
+                  type="file"
+                  onChange={async (e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      console.log(e.target.files[0]);
 
-                    let file = e.target.files[0];
+                      let file = e.target.files[0];
 
-                    const metadata = {
-                      name: file.name,
-                      contentType: file.type,
-                      size: file.size,
-                      user: session?.user?.email,
-                      sentFrom: pathname,
-                    };
+                      const metadata = {
+                        name: file.name,
+                        contentType: file.type,
+                        size: file.size,
+                        user: session?.user?.email,
+                        sentFrom: pathname,
+                      };
 
-                    try {
-                      const response = await fetch(
-                        "http://localhost:8000/api/getMetadata",
-                        {
-                          method: "POST",
-                          headers: {
-                            "Content-Type": "application/json",
-                          },
-                          body: JSON.stringify(metadata),
+                      try {
+                        const response = await fetch(
+                          "http://localhost:8000/api/getMetadata",
+                          {
+                            method: "POST",
+                            headers: {
+                              "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(metadata),
+                          }
+                        );
+
+                        if (response.ok) {
+                          console.log("Metadata sent successfully");
+                          const uri_data: receivedMetadata =
+                            await response.json();
+                          console.log("uri_data from NewItem: ", uri_data);
+                          try {
+                            const response = await fetch(
+                              uri_data.presigned_put_uri,
+                              {
+                                method: "PUT",
+                                headers: {
+                                  "Content-Type": metadata.contentType,
+                                },
+                                body: e.target.files[0],
+                              }
+                            );
+
+                            if (response.ok) {
+                              console.log("File uploaded successfully!");
+                              await addDoc(collectionRef, {
+                                name: uri_data.obj_key,
+                                user: uri_data.user_name,
+                                size: file.size,
+                                contentType: file.type,
+                                isStarred: false,
+                                sentFrom: uri_data.sent_from,
+                              });
+                            } else {
+                              console.log("Error uploading file.");
+                            }
+                          } catch (error) {
+                            console.error("An error occurred:", error);
+                          }
+                        } else {
+                          console.log(
+                            `Metadata response error ${response.status}`
+                          );
                         }
-                      );
+                      } catch (error) {
+                        console.log("An error occured while sending metadata");
+                      }
+                    }
+                  }}
+                  className="w-full"
+                />
+                <MdOutlineUploadFile size={"1.5em"} />
+                <h5>File Upload</h5>
+              </label>
+            </li>
+          ) : (
+            <>
+              <li>
+                <label className="flex gap-6 items-center">
+                  <input
+                    type="file"
+                    onChange={async (e) => {
+                      if (e.target.files && e.target.files.length > 0) {
+                        console.log(e.target.files[0]);
 
-                      if (response.ok) {
-                        console.log("Metadata sent successfully");
-                        const uri_data: receivedMetadata =
-                          await response.json();
-                        console.log("uri_data from NewItem: ", uri_data);
+                        let file = e.target.files[0];
+
+                        const metadata = {
+                          name: file.name,
+                          contentType: file.type,
+                          size: file.size,
+                          user: session?.user?.email,
+                          sentFrom: pathname,
+                        };
+
                         try {
                           const response = await fetch(
-                            uri_data.presigned_put_uri,
+                            "http://localhost:8000/api/getMetadata",
                             {
-                              method: "PUT",
+                              method: "POST",
                               headers: {
-                                "Content-Type": metadata.contentType,
+                                "Content-Type": "application/json",
                               },
-                              body: e.target.files[0],
+                              body: JSON.stringify(metadata),
                             }
                           );
 
                           if (response.ok) {
-                            console.log("File uploaded successfully!");
-                            await addDoc(collectionRef, {
-                              name: uri_data.obj_key,
-                              user: uri_data.user_name,
-                              size: file.size,
-                              contentType: file.type,
-                              isStarred: false,
-                              sentFrom: uri_data.sent_from,
-                            });
+                            console.log("Metadata sent successfully");
+                            const uri_data: receivedMetadata =
+                              await response.json();
+                            console.log("uri_data from NewItem: ", uri_data);
+                            try {
+                              const response = await fetch(
+                                uri_data.presigned_put_uri,
+                                {
+                                  method: "PUT",
+                                  headers: {
+                                    "Content-Type": metadata.contentType,
+                                  },
+                                  body: e.target.files[0],
+                                }
+                              );
+
+                              if (response.ok) {
+                                console.log("File uploaded successfully!");
+                                await addDoc(collectionRef, {
+                                  name: uri_data.obj_key,
+                                  user: uri_data.user_name,
+                                  size: file.size,
+                                  contentType: file.type,
+                                  isStarred: false,
+                                  sentFrom: uri_data.sent_from,
+                                });
+                              } else {
+                                console.log("Error uploading file.");
+                              }
+                            } catch (error) {
+                              console.error("An error occurred:", error);
+                            }
                           } else {
-                            console.log("Error uploading file.");
+                            console.log(
+                              `Metadata response error ${response.status}`
+                            );
                           }
                         } catch (error) {
-                          console.error("An error occurred:", error);
+                          console.log(
+                            "An error occured while sending metadata"
+                          );
                         }
-                      } else {
-                        console.log(
-                          `Metadata response error ${response.status}`
-                        );
                       }
-                    } catch (error) {
-                      console.log("An error occured while sending metadata");
+                    }}
+                    className="w-full"
+                  />
+                  <MdOutlineUploadFile size={"1.5em"} />
+                  <h5>File Upload</h5>
+                </label>
+              </li>
+              <li>
+                <label
+                  className="flex gap-6 items-center"
+                  onClick={() => {
+                    const modal = document.getElementById("my_modal_5");
+                    if (modal instanceof HTMLDialogElement) {
+                      modal.showModal();
                     }
-                  }
-                }}
-                className="w-full"
-              />
-              <MdOutlineUploadFile size={"1.5em"} />
-              <h5>File Upload</h5>
-            </label>
-          </li>
-          <li>
-            <label
-              className="flex gap-6 items-center"
-              onClick={() => {
-                const modal = document.getElementById("my_modal_5");
-                if (modal instanceof HTMLDialogElement) {
-                  modal.showModal();
-                }
-              }}
-            >
-              <MdOutlineDriveFolderUpload size={"1.5em"} />
-              <h5>Create Folder</h5>
-            </label>
-          </li>
+                  }}
+                >
+                  <MdOutlineDriveFolderUpload size={"1.5em"} />
+                  <h5>Create Folder</h5>
+                </label>
+              </li>
+            </>
+          )}
         </ul>
       </div>
       <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
