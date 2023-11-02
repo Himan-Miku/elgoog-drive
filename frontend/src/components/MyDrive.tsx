@@ -11,10 +11,12 @@ import {
 import { receivedMetadata } from "./NewItem";
 import { FolderNameStore } from "@/context/FolderNameContext";
 import { usePathname } from "next/navigation";
+import { ResultsStore } from "@/context/MyDriveDataContext";
 
 const MyDrive = () => {
   const { data: session } = useSession();
   const { folName, setFolName } = FolderNameStore();
+  const { results } = ResultsStore();
   const pathname = usePathname();
 
   return (
@@ -194,7 +196,13 @@ const MyDrive = () => {
         </div>
       </dialog>
       <div className="min-w-fit w-32 py-3 px-[0.6rem]">
-        <h6 className="text-sm font-medium text-gray-500">Suggested</h6>
+        {results.length != 0 ? (
+          <h6 className="text-sm font-medium text-gray-500">Suggested</h6>
+        ) : (
+          <h6 className="font-medium text-gray-500 text-2xl">
+            No Files Uploaded in My Drive 🗃️
+          </h6>
+        )}
       </div>
     </div>
   );
