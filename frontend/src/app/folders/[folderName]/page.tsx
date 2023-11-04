@@ -88,7 +88,7 @@ const FolderPage = () => {
 
                       try {
                         const response = await fetch(
-                          "http://localhost:8000/api/getMetadata",
+                          "https://drive-rust-backend.onrender.com/api/getMetadata",
                           {
                             method: "POST",
                             headers: {
