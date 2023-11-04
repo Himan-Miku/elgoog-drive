@@ -22,8 +22,13 @@ const MyDriveContent = () => {
   const { queryy, searchResults } = AlgoliaStore();
   const { data: session } = useSession();
   let username = session?.user?.email?.split("@")[0] || "";
+  let sentFromArray = ["/", "/starred", "/storage"];
 
-  const q = query(collectionRef, where("user", "==", username));
+  const q = query(
+    collectionRef,
+    where("user", "==", username),
+    where("sentFrom", "in", sentFromArray)
+  );
 
   useEffect(() => {
     const unsubscribe = onSnapshot(q, (snapshot) => {
