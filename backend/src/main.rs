@@ -14,6 +14,11 @@ use utils::s3::{
 mod structs;
 mod utils;
 
+#[get("/")]
+async fn hello_from_backend() -> impl Responder {
+    HttpResponse::Ok().body("Hello There")
+}
+
 #[get("/api/getObjects")]
 async fn get_objects(name: web::Query<GetObjectsParams>) -> impl Responder {
     let user = &name.name;
@@ -202,6 +207,7 @@ async fn main() -> std::io::Result<()> {
             .service(remove_object)
             .service(remove_folder)
             .service(download_object)
+            .service(hello_from_backend)
     })
     .bind("0.0.0.0:8000")?
     .run()
