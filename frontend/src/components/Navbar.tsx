@@ -32,7 +32,9 @@ const Navbar = () => {
     }
 
     try {
-      const result = await index.search(queryy);
+      let userPrefix = session?.user?.email?.split("@")[0] || "";
+      const queryToSend = `${userPrefix}/${queryy}`;
+      const result = await index.search(queryToSend);
       setSearchResults(result.hits as SearchResults);
     } catch (error) {
       console.error("Error Searching with Algolia : ", error);
