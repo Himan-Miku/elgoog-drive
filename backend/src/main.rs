@@ -203,7 +203,7 @@ async fn main() -> std::io::Result<()> {
             .service(remove_folder)
             .service(download_object)
     })
-    .bind("https://drive-rust-backend.onrender.com")?
+    .bind("0.0.0.0:8000")?
     .run()
     .await
 }
