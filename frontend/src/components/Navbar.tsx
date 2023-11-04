@@ -4,6 +4,8 @@ import { useSession } from "next-auth/react";
 import algoliasearch from "algoliasearch/lite";
 import { firestoreData } from "./NewItem";
 import { AlgoliaStore } from "@/context/AlgoliaContext";
+import { usePathname } from "next/navigation";
+import clsx from "clsx";
 
 interface SearchResultData {
   readonly objectID: string;
@@ -18,6 +20,7 @@ export type SearchResults = SearchResultItem[];
 const Navbar = () => {
   const { queryy, searchResults, setQueryy, setSearchResults } = AlgoliaStore();
   const { data: session } = useSession();
+  const pathname = usePathname();
 
   const searchClient = algoliasearch(
     process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!,
@@ -52,18 +55,31 @@ const Navbar = () => {
             height={20}
             viewBox="0 0 20 20"
             focusable="false"
-            className="fill-[#e6e6e6] group-hover:fill-custom-green"
+            className={clsx("fill-[#e6e6e6] group-hover:fill-custom-green", {
+              "fill-gray-600": pathname != "/",
+            })}
           >
             <path d="M20.49,19l-5.73-5.73C15.53,12.2,16,10.91,16,9.5C16,5.91,13.09,3,9.5,3S3,5.91,3,9.5C3,13.09,5.91,16,9.5,16 c1.41,0,2.7-0.47,3.77-1.24L19,20.49L20.49,19z M5,9.5C5,7.01,7.01,5,9.5,5S14,7.01,14,9.5S11.99,14,9.5,14S5,11.99,5,9.5z"></path>
           </svg>
         </div>
         <input
           type="search"
-          className="w-full focus:outline-none caret-white bg-custom-backg font-semibold text-[#e6e6e6] placeholder:font-semibold"
-          placeholder="Search in Drive"
+          className={clsx(
+            "w-full focus:outline-none caret-white bg-custom-backg font-semibold text-[#e6e6e6] placeholder:font-semibold",
+            {
+              "placeholder:text-gray-600 placeholder:font-light":
+                pathname != "/",
+            }
+          )}
+          placeholder={
+            pathname != "/"
+              ? "Search in Drive from My Drive Tab"
+              : "Search in Drive"
+          }
           value={queryy}
           onChange={(e) => setQueryy(e.target.value)}
           onKeyUp={search}
+          disabled={pathname != "/"}
         />
       </div>
       <Logout image={session?.user?.image!} />
