@@ -53,7 +53,7 @@ const MyDrive = () => {
 
                     try {
                       const response = await fetch(
-                        "https://drive-rust-backend.onrender.com/api/getMetadata",
+                        "http://localhost:8000/api/getMetadata",
                         {
                           method: "POST",
                           headers: {
@@ -155,7 +155,7 @@ const MyDrive = () => {
 
                     try {
                       const response = await fetch(
-                        "https://drive-rust-backend.onrender.com/api/createFolder",
+                        "http://localhost:8000/api/createFolder",
                         {
                           method: "POST",
                           headers: {

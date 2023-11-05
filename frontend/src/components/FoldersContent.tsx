@@ -62,7 +62,7 @@ const FoldersContent = ({ data }: FoldersContentProps) => {
   const deleteFolder = async (folderId: string, folderName: string) => {
     let folName = folderName.replace(/\/$/, "");
     const res = await fetch(
-      `https://drive-rust-backend.onrender.com/api/deleteFolder/${folName}`,
+      `http://localhost:8000/api/deleteFolder/${folName}`,
       {
         method: "DELETE",
       }
