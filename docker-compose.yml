@@ -1,0 +1,27 @@
+version: "3"
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: elgoog-frontend
+    ports:
+      - 3000:3000
+    networks:
+      - elgoog-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env
+    container_name: elgoog-backend
+    ports:
+      - 8000:8000
+    networks:
+      - elgoog-network
+
+networks:
+  elgoog-network:
+    driver: bridge
