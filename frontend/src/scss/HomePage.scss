@@ -12,12 +12,16 @@
     .navbar {
         grid-area: navbar;
         background-color: $nav-side-bar;
+        margin: 0;
+        padding: 0;
     }
 
     .content {
         grid-area: content;
         border-radius: 1.5rem 1.5rem 0 0;
         background-color: $main-bg;
+        margin: 0;
+        padding: 0;
     }
 
     .sidebar {
@@ -42,7 +46,7 @@ tr {
     border-bottom: 1px solid #ccccccab;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 640px) {
     .wrapper {
         grid-template-columns: auto;
         grid-template-rows: 4rem auto;
@@ -65,9 +69,5 @@ tr {
         grid-area: content;
         border-radius: 1.5rem;
         background-color: $main-bg;
-    }
-
-    .display-none {
-        display: none;
     }
 }
