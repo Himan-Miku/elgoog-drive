@@ -79,6 +79,35 @@ export const FileUpload = () =>
     },
   });
 
+const shareLinkToast = (url: string) => {
+  toast.custom((t) => (
+    <div
+      className={`${
+        t.visible ? "animate-enter" : "animate-leave"
+      } max-w-sm w-full bg-custom-backg border border-gray-600 rounded-xl`}
+    >
+      <div className="flex justify-between items-center gap-4 py-2 px-3">
+        <div className="flex items-start flex-col justify-center gap-2 p-1">
+          <p className="text-base font-semibold text-gray-400">
+            Shareable Link 🌐:
+          </p>
+          <p className="text-sm font-semibold text-custom-green">{url}</p>
+        </div>
+        <div>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(url);
+            }}
+            className="btn-sm rounded-md bg-custom-nav hover:bg-custom-green hover:text-custom-backg font-semibold"
+          >
+            Copy
+          </button>
+        </div>
+      </div>
+    </div>
+  ));
+};
+
 const downloadObject = async (objKey: string) => {
   let downloadObj = {
     objKey,
@@ -101,6 +130,47 @@ const downloadObject = async (objKey: string) => {
       link.rel = "noopener noreferrer";
 
       link.click();
+    } else {
+      console.log(res1.statusText);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const shareObject = async (objKey: string) => {
+  let shareObj = {
+    objKey,
+  };
+  let shortenerBaseUrl = "https://url-shortener-service.p.rapidapi.com/shorten";
+
+  try {
+    const res1 = await fetch("http://localhost:8000/api/shareObject", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(shareObj),
+    });
+    if (res1.ok) {
+      const presigned_get_url = (await res1.json()) as string;
+
+      const options = {
+        method: "POST",
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+          "X-RapidAPI-Key": process.env.NEXT_PUBLIC_URL_SHORTNER_KEY!,
+          "X-RapidAPI-Host": "url-shortener-service.p.rapidapi.com",
+        },
+        body: new URLSearchParams({
+          url: `${presigned_get_url}`,
+        }),
+      };
+
+      const response = await fetch(shortenerBaseUrl, options);
+      const shortenUrl = await response.json();
+
+      shareLinkToast(shortenUrl.result_url);
     } else {
       console.log(res1.statusText);
     }
@@ -213,7 +283,7 @@ const ObjectCards = ({ data, forFolders }: ObjectCardsProps) => {
                   </div>
                   <ul
                     tabIndex={0}
-                    className="dropdown-content z-[1] menu p-2 shadow bg-custom-backg border border-custom-nav rounded-box w-[13.5rem] mt-[1.35rem] text-custom-green"
+                    className="dropdown-content z-[1] menu p-2 shadow bg-custom-backg border border-custom-nav rounded-box w-[13.5rem] mt-2 text-custom-green"
                   >
                     <li>
                       <label
@@ -242,6 +312,15 @@ const ObjectCards = ({ data, forFolders }: ObjectCardsProps) => {
                           <h5>Star</h5>
                         </label>
                       )}
+                    </li>
+                    <li>
+                      <label
+                        className="flex gap-6 items-center"
+                        onClick={() => shareObject(obj.name)}
+                      >
+                        <MdSimCardDownload size={"1.5em"} />
+                        <h5>Share</h5>
+                      </label>
                     </li>
                     <li>
                       <label
