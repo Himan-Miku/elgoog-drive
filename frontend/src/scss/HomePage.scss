@@ -12,8 +12,6 @@
     .navbar {
         grid-area: navbar;
         background-color: $nav-side-bar;
-        position: fixed;
-        z-index: 20;
     }
 
     .content {
