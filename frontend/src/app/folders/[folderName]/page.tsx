@@ -150,9 +150,15 @@ const FolderPage = () => {
           </ul>
         </div>
       </div>
-      <div className="py-2 grid md:grid-cols-5 sm:grid-cols-3 grid-cols-2 gap-4">
-        <ObjectCards data={folderNameData} forFolders={true} />
-      </div>
+      {folderNameData.length !== 0 ? (
+        <div className="py-2 grid md:grid-cols-5 sm:grid-cols-3 grid-cols-2 gap-4">
+          <ObjectCards data={folderNameData} forFolders={true} />
+        </div>
+      ) : (
+        <h6 className="font-medium text-gray-500 text-2xl px-6">
+          No Files Uploaded in this Folder 📁
+        </h6>
+      )}
     </div>
   );
 };
