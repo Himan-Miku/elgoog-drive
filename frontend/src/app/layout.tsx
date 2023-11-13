@@ -25,7 +25,7 @@ export default async function RootLayout({
   console.log("Session from layout component: ", session);
 
   return (
-    <html lang="en">
+    <html className="p-0 m-0" lang="en">
       <body className={`bg-custom-nav ${inter.className}`}>
         <SessionProvider session={session}>
           {session ? (
