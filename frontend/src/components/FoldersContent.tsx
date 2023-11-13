@@ -12,7 +12,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { collectionRef, firestoreDb } from "@/lib/utils/firebaseConfig";
-import { deleteNotify } from "./ObjectCards";
+import { FolderDeleteToast, deleteNotify } from "./ObjectCards";
 import { firestoreDataWithoutID } from "./MyDriveContent";
 
 interface FoldersContentProps {
@@ -71,6 +71,8 @@ const FoldersContent = ({ data }: FoldersContentProps) => {
       console.log(await res.text());
       await delete_docs_firestore(folderName);
       await deleteDoc(doc(firestoreDb, "folders", folderId));
+
+      FolderDeleteToast();
     } else {
       console.log(res.text);
     }

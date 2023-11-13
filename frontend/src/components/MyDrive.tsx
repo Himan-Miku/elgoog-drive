@@ -12,6 +12,7 @@ import { receivedMetadata } from "./NewItem";
 import { FolderNameStore } from "@/context/FolderNameContext";
 import { usePathname } from "next/navigation";
 import { ResultsStore } from "@/context/MyDriveDataContext";
+import { FileUpload } from "./ObjectCards";
 
 const MyDrive = () => {
   const { data: session } = useSession();
@@ -90,6 +91,8 @@ const MyDrive = () => {
                               isStarred: false,
                               sentFrom: uri_data.sent_from,
                             });
+
+                            FileUpload();
                           } else {
                             console.log("Error uploading file.");
                           }

@@ -14,7 +14,7 @@ type ObjectCardsProps = {
 };
 
 const starNotify = () =>
-  toast("Item Starred", {
+  toast("File Starred", {
     icon: "⭐",
     duration: 4000,
     style: {
@@ -25,7 +25,7 @@ const starNotify = () =>
   });
 
 export const deleteNotify = () =>
-  toast("Item Deleted", {
+  toast("File Deleted", {
     icon: "🗑️",
     duration: 4000,
     style: {
@@ -36,8 +36,41 @@ export const deleteNotify = () =>
   });
 
 const unstarNotify = () =>
-  toast("Item Removed from Starred", {
+  toast("File Removed from Starred", {
     icon: "💫",
+    duration: 4000,
+    style: {
+      borderRadius: "10px",
+      background: "#3F4BD1",
+      color: "#fff",
+    },
+  });
+
+export const FolderCreateToast = () =>
+  toast("Folder Created", {
+    icon: "📂",
+    duration: 4000,
+    style: {
+      borderRadius: "10px",
+      background: "#3F4BD1",
+      color: "#fff",
+    },
+  });
+
+export const FolderDeleteToast = () =>
+  toast("Folder Deleted", {
+    icon: "📂",
+    duration: 4000,
+    style: {
+      borderRadius: "10px",
+      background: "#3F4BD1",
+      color: "#fff",
+    },
+  });
+
+export const FileUpload = () =>
+  toast("File Uploaded", {
+    icon: "📂",
     duration: 4000,
     style: {
       borderRadius: "10px",

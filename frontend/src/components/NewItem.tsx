@@ -10,6 +10,7 @@ import {
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { collectionRef, firestoreDb } from "@/lib/utils/firebaseConfig";
 import { usePathname } from "next/navigation";
+import { FileUpload, FolderCreateToast } from "./ObjectCards";
 
 export type receivedMetadata = {
   obj_key: string;
@@ -109,6 +110,8 @@ const NewItem = () => {
                                 isStarred: false,
                                 sentFrom: uri_data.sent_from,
                               });
+
+                              FileUpload();
                             } else {
                               console.log("Error uploading file.");
                             }
@@ -190,6 +193,8 @@ const NewItem = () => {
                                   isStarred: false,
                                   sentFrom: uri_data.sent_from,
                                 });
+
+                                FileUpload();
                               } else {
                                 console.log("Error uploading file.");
                               }
@@ -279,6 +284,8 @@ const NewItem = () => {
                           user: res.user,
                           createdAt: serverTimestamp(),
                         });
+
+                        FolderCreateToast();
                       } else {
                         console.log(response.status);
                       }
