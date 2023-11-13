@@ -109,7 +109,20 @@ async fn download_object(key_json: web::Json<DownloadObj>) -> impl Responder {
     let shared_config = aws_config::load_from_env().await;
     let client = Client::new(&shared_config);
 
-    let presigned_get_uri = get_object_uri(&client, "elgoog-drive", obj_key.as_str(), 60)
+    let presigned_get_uri = get_object_uri(&client, "elgoog-drive", obj_key.as_str(), 30)
+        .await
+        .unwrap();
+    HttpResponse::Created().json(presigned_get_uri)
+}
+
+#[post("/api/shareObject")]
+async fn share_object(key_json: web::Json<DownloadObj>) -> impl Responder {
+    let DownloadObj { obj_key } = key_json.into_inner();
+
+    let shared_config = aws_config::load_from_env().await;
+    let client = Client::new(&shared_config);
+
+    let presigned_get_uri = get_object_uri(&client, "elgoog-drive", obj_key.as_str(), 432000)
         .await
         .unwrap();
     HttpResponse::Created().json(presigned_get_uri)
@@ -208,6 +221,7 @@ async fn main() -> std::io::Result<()> {
             .service(remove_folder)
             .service(download_object)
             .service(hello_from_backend)
+            .service(share_object)
     })
     .bind("0.0.0.0:8000")?
     .run()
