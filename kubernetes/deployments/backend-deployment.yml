@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elgoog-drive-backend
+  namespace: elgoog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elgoog-drive-backend
+  template:
+    metadata:
+      labels:
+        app: elgoog-drive-backend
+    spec:
+      containers:
+      - name: elgoog-drive-backend
+        image: himanmiku/elgoog-drive-backend:latest
+        # imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        envFrom:
+          - secretRef:
+              name: elgoog-drive-backend-secrets
