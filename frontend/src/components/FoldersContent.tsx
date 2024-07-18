@@ -88,11 +88,11 @@ const FoldersContent = ({ data }: FoldersContentProps) => {
           folName.folderName.replace(/\/$/, "");
         return (
           <div
-            className="flex gap-6 items-center py-3 px-4 hover:bg-custom-nav bg-custom-nav min-w-fit rounded-xl"
+            className="flex md:gap-6 gap-3 items-center md:py-3 py-2 md:pl-4 md:pr-3 pl-3 pr-2 hover:bg-custom-nav bg-custom-nav min-w-fit rounded-xl"
             key={folName.id}
           >
             <Link href={`/folders/${actualFolderName}`}>
-              <div className="flex gap-2 items-center">
+              <div className="flex gap-2 items-center md:text-base text-sm">
                 <FaFolder />
                 <h3>{actualFolderName}</h3>
               </div>
@@ -105,9 +105,9 @@ const FoldersContent = ({ data }: FoldersContentProps) => {
               </label>
               <ul
                 tabIndex={0}
-                className="dropdown-content z-[1] menu shadow bg-custom-backg rounded-box font-semibold mb-4 translate-x-4"
+                className="dropdown-content z-[1] menu shadow bg-custom-backg rounded-box font-semibold md:mb-4 mb-2 translate-x-4"
               >
-                <li>
+                <li className="border border-custom-green border-opacity-30 rounded-lg">
                   <button
                     onClick={() => deleteFolder(folName.id, folName.folderName)}
                     className="text-custom-green"

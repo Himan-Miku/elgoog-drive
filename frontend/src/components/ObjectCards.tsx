@@ -2,11 +2,13 @@
 import Image from "next/image";
 import { SlOptionsVertical } from "react-icons/sl";
 import { MdSimCardDownload, MdStar, MdDelete } from "react-icons/md";
+import { RiUserShared2Fill } from "react-icons/ri";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { firestoreData } from "./NewItem";
 import { firestoreDb } from "@/lib/utils/firebaseConfig";
 import toast, { Toaster } from "react-hot-toast";
 import { usePathname } from "next/navigation";
+import { IResizeContext, resizeContext } from "@/context/ResizeContext";
 
 type ObjectCardsProps = {
   data: Array<firestoreData>;
@@ -210,27 +212,34 @@ const UnstarObject = async (docId: string) => {
 
 const ObjectCards = ({ data, forFolders }: ObjectCardsProps) => {
   const pathname = usePathname();
+  const { isMobile } = resizeContext() as IResizeContext;
 
   return (
     <>
       {data?.map((obj) => {
         let imageSrc;
+        let mdImageSrc;
         let smImageSrc;
 
         if (obj.contentType.startsWith("image")) {
           imageSrc = "/image-lg.png";
+          mdImageSrc = "/image-md.png";
           smImageSrc = "/image-sm.png";
         } else if (obj.contentType === "application/pdf") {
           imageSrc = "/pdf-lg.png";
+          mdImageSrc = "/pdf-md.png";
           smImageSrc = "/pdf-sm.png";
         } else if (obj.contentType.startsWith("video")) {
           imageSrc = "/mp4-lg.png";
+          mdImageSrc = "/mp4-md.png";
           smImageSrc = "/mp4-sm.png";
         } else if (obj.contentType.startsWith("audio")) {
           imageSrc = "/music-lg.png";
+          mdImageSrc = "/music-md.png";
           smImageSrc = "/music-sm.png";
         } else {
           imageSrc = "/docs-lg.png";
+          mdImageSrc = "/docs-md.png";
           smImageSrc = "/docs-sm.png";
         }
 
@@ -238,10 +247,10 @@ const ObjectCards = ({ data, forFolders }: ObjectCardsProps) => {
           <div key={obj.id}>
             <Toaster position="bottom-left" reverseOrder={false} />
             <div
-              className="w-full bg-custom-nav px-3 pt-2 pb-3 rounded-xl h-52 flex flex-col gap-2 group one-edge-box-shadow hover:-translate-y-1 transition-all duration-300 ease-in-out"
+              className="w-full bg-custom-nav md:px-3 px-2 md:pt-2 md:pb-3 pt-1 pb-2 rounded-xl h-52 flex flex-col gap-2 group one-edge-box-shadow hover:-translate-y-1 transition-all duration-300 ease-in-out"
               onDoubleClick={() => downloadObject(obj.name)}
             >
-              <div className="flex gap-2 px-2 py-2 items-center justify-between">
+              <div className="flex gap-2 md:px-2 px-1 md:py-2 pt-2 pb-1 items-center justify-between">
                 <Image
                   src={smImageSrc}
                   alt="small-image"
@@ -249,7 +258,7 @@ const ObjectCards = ({ data, forFolders }: ObjectCardsProps) => {
                   width={24}
                   className="w-5"
                 />
-                <h3 className="text-[#e6e6e6] text-sm font-medium group-hover:text-blue-400 transition-all duration-300 ease-in-out">
+                <h3 className="text-[#e6e6e6] md:text-sm break-all text-xs font-medium group-hover:text-blue-400 transition-all duration-300 ease-in-out">
                   {forFolders
                     ? obj.name.substring(
                         obj.name.indexOf("/", obj.name.indexOf("/") + 1) + 1
@@ -283,11 +292,11 @@ const ObjectCards = ({ data, forFolders }: ObjectCardsProps) => {
                   </div>
                   <ul
                     tabIndex={0}
-                    className="dropdown-content z-[1] menu p-2 shadow bg-custom-backg border border-custom-nav rounded-box w-[13.5rem] mt-2 text-custom-green"
+                    className="dropdown-content z-[1] menu md:p-2 p-1 shadow bg-custom-backg border border-custom-nav rounded-box w-40 md:w-[13.5rem] mt-2 text-custom-green"
                   >
                     <li>
                       <label
-                        className="flex gap-6 items-center"
+                        className="flex md:gap-6 gap-3 items-center"
                         onClick={() => downloadObject(obj.name)}
                       >
                         <MdSimCardDownload size={"1.5em"} />
@@ -297,7 +306,7 @@ const ObjectCards = ({ data, forFolders }: ObjectCardsProps) => {
                     <li>
                       {pathname === "/starred" ? (
                         <label
-                          className="flex gap-6 items-center"
+                          className="flex md:gap-6 gap-3 items-center"
                           onClick={() => UnstarObject(obj.id)}
                         >
                           <MdStar size={"1.5em"} />
@@ -305,7 +314,7 @@ const ObjectCards = ({ data, forFolders }: ObjectCardsProps) => {
                         </label>
                       ) : (
                         <label
-                          className="flex gap-6 items-center"
+                          className="flex md:gap-6 gap-3 items-center"
                           onClick={() => starObject(obj.id)}
                         >
                           <MdStar size={"1.5em"} />
@@ -315,16 +324,16 @@ const ObjectCards = ({ data, forFolders }: ObjectCardsProps) => {
                     </li>
                     <li>
                       <label
-                        className="flex gap-6 items-center"
+                        className="flex md:gap-6 gap-3 items-center"
                         onClick={() => shareObject(obj.name)}
                       >
-                        <MdSimCardDownload size={"1.5em"} />
+                        <RiUserShared2Fill size={"1.5em"} />
                         <h5>Share</h5>
                       </label>
                     </li>
                     <li>
                       <label
-                        className="flex gap-6 items-center"
+                        className="flex md:gap-6 gap-3 items-center"
                         onClick={() => deleteObject(obj.name, obj.id)}
                       >
                         <MdDelete size={"1.5em"} />
@@ -334,8 +343,13 @@ const ObjectCards = ({ data, forFolders }: ObjectCardsProps) => {
                   </ul>
                 </div>
               </div>
-              <div className="w-full grid place-content-center flex-grow bg-custom-backg h-20 rounded-xl">
-                <Image src={imageSrc} alt="big-image" height={64} width={64} />
+              <div className="w-full grid place-content-center flex-grow bg-custom-backg md:h-20 h-16 rounded-xl">
+                <Image
+                  src={isMobile ? mdImageSrc : imageSrc}
+                  alt="big-image"
+                  height={isMobile ? 48 : 64}
+                  width={isMobile ? 48 : 64}
+                />
               </div>
             </div>
           </div>
