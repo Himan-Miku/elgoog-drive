@@ -1,5 +1,6 @@
 use actix_cors::Cors;
 use actix_web::{delete, get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_web_prom::PrometheusMetricsBuilder;
 use aws_sdk_s3::Client;
 use uuid::Uuid;
 
@@ -81,7 +82,7 @@ async fn get_metadata(metadata: web::Json<Metadata>) -> impl Responder {
     let sent_metadata = SentMetadata {
         obj_key: formated_string,
         presigned_put_uri,
-        user_name: user_name[0].clone().to_string(),
+        user_name: user_name[0].to_string(),
         sent_from,
     };
 
@@ -208,10 +209,16 @@ async fn remove_folder(path: web::Path<(String, String)>) -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
+    let prometheus = PrometheusMetricsBuilder::new("api")
+        .endpoint("/metrics")
+        .build()
+        .unwrap();
+
+    HttpServer::new(move || {
         let cors = Cors::permissive();
 
         App::new()
+            .wrap(prometheus.clone())
             .wrap(cors)
             .service(create_folder)
             .service(fetch_folders)
