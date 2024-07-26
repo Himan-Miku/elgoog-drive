@@ -52,10 +52,12 @@ const StorageList = () => {
     <div>
       <table className="w-full text-left text-[#e6e6e6e3]">
         <thead>
-          <tr className="font-semibold text-lg">
-            <th className="py-4 w-[85%]">Files using Drive Storage</th>
+          <tr className="font-semibold md:text-lg text-base">
+            <th className="md:py-4 py-2 md:w-[85%] w-[70%]">
+              Files using Drive Storage
+            </th>
             <th
-              className="p-4 cursor-pointer flex gap-2 items-center"
+              className="px-2 py-4 cursor-pointer flex gap-2 items-center"
               onClick={() => setIsDesc((prev) => !prev)}
             >
               <h3>Storage Used</h3>
@@ -80,8 +82,11 @@ const StorageList = () => {
             }
 
             return (
-              <tr key={file.id} className="font-medium text-sm tracking-wide">
-                <td className="py-4 px-6 w-[85%] flex gap-5">
+              <tr
+                key={file.id}
+                className="font-medium text-sm md:tracking-wide tracking-normal"
+              >
+                <td className="md:py-4 md:px-6 px-3 py-3 w-full flex md:gap-5 gap-3">
                   <Image
                     src={smImageSrc}
                     alt="small-image"
@@ -94,20 +99,20 @@ const StorageList = () => {
                     {file.name.substring(
                       file.name.indexOf("/") + 1,
                       file.name.length
-                    ).length > 45
+                    ).length > 20
                       ? file.name
                           .substring(
                             file.name.indexOf("/") + 1,
                             file.name.length
                           )
-                          .substring(0, 45) + "..."
+                          .substring(0, 20) + "..."
                       : file.name.substring(
                           file.name.indexOf("/") + 1,
                           file.name.length
                         )}
                   </h3>
                 </td>
-                <td className="p-4">
+                <td className="md:p-4 p-2">
                   {bytes.format(file.size, { unitSeparator: " " })}
                 </td>
               </tr>

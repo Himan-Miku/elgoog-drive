@@ -6,3 +6,22 @@
     color: white;
     background: #48C78E;
 }
+
+@layer utilities {
+    .scrollbar::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    .scrollbar::-webkit-scrollbar-track {
+        background: #202124;
+    }
+
+    .scrollbar::-webkit-scrollbar-thumb {
+        background: #525355;
+    }
+
+    .scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(244, 242, 239, 0.5);
+    }
+}

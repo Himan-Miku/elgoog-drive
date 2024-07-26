@@ -51,20 +51,20 @@ const Storage = () => {
   console.log("percentages : ", percentage);
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="text-custom-green text-xl font-semibold tracking-wide">
+    <div className="flex flex-col md:gap-6 gap-4">
+      <div className="text-custom-green md:text-xl text-lg font-semibold tracking-wide">
         <h3>Storage Uploaded</h3>
       </div>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col md:gap-4 gap-3">
         <div>
           <h3>
-            <span className="text-2xl text-[#e6e6e6e3] font-semibold">
+            <span className="md:text-2xl text-xl text-[#e6e6e6e3] font-semibold">
               {bytes.format(totalSize!, { unitSeparator: " " })}
             </span>{" "}
             used
           </h3>
         </div>
-        <div className="flex h-2 rounded-2xl w-full">
+        <div className="flex md:h-2 h-1 rounded-2xl w-full">
           <div
             className={`h-full rounded-2xl bg-[#4285F4]`}
             style={{ width: `${percentage.image}%` }}
@@ -82,7 +82,7 @@ const Storage = () => {
             style={{ width: `${percentage.other}%` }}
           ></div>
         </div>
-        <div className="flex gap-6 text-sm">
+        <div className="flex gap-6 md:text-sm text-xs">
           <div className="flex gap-2 items-center">
             <div className="rounded-full bg-[#4285F4] h-2 w-2"></div>
             <h5>Images</h5>

@@ -48,8 +48,8 @@ const FolderPage = () => {
   let folName = pathname.split("/").filter(Boolean).pop()?.replace(/%20/g, " ");
 
   return (
-    <div className="pt-5 px-8 flex flex-col gap-3">
-      <div className="py-2 flex items-center justify-center w-52 min-w-fit text-xl font-semibold">
+    <div className="md:pt-5 md:px-8 pt-3 px-3 flex flex-col gap-3">
+      <div className="md:py-2 py-1 flex items-center justify-center w-52 min-w-fit md:text-xl text-lg font-semibold">
         <Link href={"/"}>
           <h5 className="text-custom-green p-2 hover:bg-custom-nav rounded-xl cursor-pointer">
             My Drive /{" "}
@@ -66,10 +66,10 @@ const FolderPage = () => {
           </label>
           <ul
             tabIndex={0}
-            className="dropdown-content z-[1] menu p-2 bg-custom-backg rounded-box w-[13.5rem] ml-3 text-custom-green shadow-small -translate-y-1"
+            className="dropdown-content z-[1] menu p-1 bg-custom-backg rounded-box md:w-[13.5rem] w-44 md:ml-3 ml-2 text-custom-green shadow-small text-sm"
           >
             <li>
-              <label className="flex gap-6 items-center">
+              <label className="flex md:gap-6 gap-3 items-center">
                 <input
                   type="file"
                   onChange={async (e) => {
@@ -155,7 +155,7 @@ const FolderPage = () => {
           <ObjectCards data={folderNameData} forFolders={true} />
         </div>
       ) : (
-        <h6 className="font-medium text-gray-500 text-2xl px-6">
+        <h6 className="font-medium text-gray-500 text-2xl md:px-6 px-3">
           No Files Uploaded in this Folder 📁
         </h6>
       )}

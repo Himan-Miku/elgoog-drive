@@ -1,6 +1,11 @@
 use actix_cors::Cors;
 use actix_web::{delete, get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_web_prom::PrometheusMetricsBuilder;
 use aws_sdk_s3::Client;
+use prometheus::Gauge;
+use std::thread;
+use std::time::Duration;
+use systemstat::{Platform, System};
 use uuid::Uuid;
 
 use structs::structs::{
@@ -81,7 +86,7 @@ async fn get_metadata(metadata: web::Json<Metadata>) -> impl Responder {
     let sent_metadata = SentMetadata {
         obj_key: formated_string,
         presigned_put_uri,
-        user_name: user_name[0].clone().to_string(),
+        user_name: user_name[0].to_string(),
         sent_from,
     };
 
@@ -208,10 +213,51 @@ async fn remove_folder(path: web::Path<(String, String)>) -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
+    let sys = System::new();
+
+    let prometheus = PrometheusMetricsBuilder::new("api")
+        .endpoint("/metrics")
+        .build()
+        .unwrap();
+
+    let cpu_usage = Gauge::new("cpu_usage", "Current CPU usage in percent").unwrap();
+    let mem_usage = Gauge::new("mem_usage", "Current memory usage in percent").unwrap();
+
+    prometheus
+        .registry
+        .register(Box::new(cpu_usage.clone()))
+        .unwrap();
+
+    prometheus
+        .registry
+        .register(Box::new(mem_usage.clone()))
+        .unwrap();
+    thread::spawn(move || loop {
+        match sys.cpu_load_aggregate() {
+            Ok(cpu) => {
+                thread::sleep(Duration::from_secs(1));
+                let cpu = cpu.done().unwrap();
+                cpu_usage.set(f64::trunc(
+                    ((cpu.system * 100.0) + (cpu.user * 100.0)).into(),
+                ));
+            }
+            Err(x) => println!("\nCPU load: error: {}", x),
+        }
+        match sys.memory() {
+            Ok(mem) => {
+                let memory_used = mem.total.0 - mem.free.0;
+                let pourcentage_used = (memory_used as f64 / mem.total.0 as f64) * 100.0;
+                mem_usage.set(f64::trunc(pourcentage_used));
+            }
+            Err(x) => println!("\nMemory: error: {}", x),
+        }
+    });
+
+    HttpServer::new(move || {
         let cors = Cors::permissive();
 
         App::new()
+            .wrap(prometheus.clone())
             .wrap(cors)
             .service(create_folder)
             .service(fetch_folders)

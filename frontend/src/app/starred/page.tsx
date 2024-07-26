@@ -39,8 +39,8 @@ export default function StarredPage() {
   }, []);
 
   return (
-    <div className="px-8 py-7 flex flex-col gap-6">
-      <div className="text-custom-green text-xl font-semibold px-1 tracking-wide">
+    <div className="md:px-8 px-3 md:py-7 py-5 flex flex-col gap-6">
+      <div className="text-custom-green md:text-xl text-lg font-semibold px-1 tracking-wide">
         Starred Files
       </div>
 

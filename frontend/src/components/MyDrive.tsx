@@ -21,21 +21,21 @@ const MyDrive = () => {
   const pathname = usePathname();
 
   return (
-    <div className="pt-5 px-8">
+    <div className="md:pt-5 md:px-8 pt-3 px-3">
       <div className="dropdown dropdown-right">
         <label
           tabIndex={0}
           className="text-custom-green min-w-fit w-32 py-2 rounded-xl hover:bg-custom-nav flex gap-2 items-center justify-center"
         >
-          <h5 className="text-xl font-semibold">My Drive</h5>
+          <h5 className="md:text-xl text-lg font-semibold">My Drive</h5>
           <IoCaretForward />
         </label>
         <ul
           tabIndex={0}
-          className="dropdown-content z-[1] menu p-2 bg-custom-backg rounded-box w-[13.5rem] ml-3 -translate-y-[0.6rem] text-custom-green shadow-small"
+          className="dropdown-content z-[1] menu p-1 bg-custom-backg rounded-box md:w-[13.5rem] w-44 md:ml-3 ml-2 -translate-y-[0.6rem] text-custom-green shadow-small text-sm"
         >
           <li>
-            <label className="flex gap-6 items-center">
+            <label className="flex md:gap-6 gap-3 items-center">
               <input
                 type="file"
                 onChange={async (e) => {
@@ -83,6 +83,7 @@ const MyDrive = () => {
 
                           if (response.ok) {
                             console.log("File uploaded successfully!");
+                            console.log(response);
                             await addDoc(collectionRef, {
                               name: uri_data.obj_key,
                               user: uri_data.user_name,
@@ -111,13 +112,13 @@ const MyDrive = () => {
                 }}
                 className="w-full"
               />
-              <MdOutlineUploadFile size={"1.5em"} />
+              <MdOutlineUploadFile size={"1.2em"} />
               <h5>File Upload</h5>
             </label>
           </li>
           <li>
             <label
-              className="flex gap-6 items-center"
+              className="flex md:gap-6 gap-3 items-center"
               onClick={() => {
                 const modal = document.getElementById("my_modal_5");
                 if (modal instanceof HTMLDialogElement) {
@@ -125,7 +126,7 @@ const MyDrive = () => {
                 }
               }}
             >
-              <MdOutlineDriveFolderUpload size={"1.5em"} />
+              <MdOutlineDriveFolderUpload size={"1.2em"} />
               <h5>Create Folder</h5>
             </label>
           </li>
@@ -198,7 +199,7 @@ const MyDrive = () => {
           </div>
         </div>
       </dialog>
-      <div className="min-w-fit w-32 py-3 px-[0.6rem]">
+      <div className="min-w-fit w-32 md:py-3 pt-1 pb-2 md:px-[0.6rem] px-3">
         {results.length != 0 ? (
           <h6 className="text-sm font-medium text-gray-500">Suggested</h6>
         ) : (

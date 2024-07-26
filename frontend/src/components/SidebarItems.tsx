@@ -15,7 +15,7 @@ const SidebarItems = () => {
           key={item.title}
           role="button"
           className={clsx(
-            "py-2 pl-5 flex gap-4 items-center rounded-3xl hover:bg-custom-backg",
+            "py-2 pl-5 flex gap-4 items-center rounded-3xl hover:bg-custom-backg w-full",
             {
               "bg-custom-blue hover:bg-custom-blue": pathname === item.path,
             }

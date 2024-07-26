@@ -58,7 +58,7 @@ const MyDriveContent = () => {
   }
 
   return (
-    <div className="px-8 py-2 grid md:grid-cols-5 sm:grid-cols-3 grid-cols-2 gap-4">
+    <div className="md:px-8 px-4 py-2 grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-3 grid-cols-2 md:gap-4 sm:gap-3 gap-2">
       <ObjectCards data={renderingResults} />
     </div>
   );

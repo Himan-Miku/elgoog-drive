@@ -2,7 +2,6 @@
 
 .wrapper {
     display: grid;
-    position: relative;
     height: 100dvh;
     grid-template-columns: 16rem auto;
     grid-template-rows: 5rem auto;
@@ -46,7 +45,7 @@ tr {
     border-bottom: 1px solid #ccccccab;
 }
 
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 768px) {
     .wrapper {
         grid-template-columns: auto;
         grid-template-rows: 4rem auto;
@@ -67,7 +66,7 @@ tr {
 
     .content {
         grid-area: content;
-        border-radius: 1.5rem;
+        border-radius: 1rem 1rem 0 0;
         background-color: $main-bg;
     }
 }
