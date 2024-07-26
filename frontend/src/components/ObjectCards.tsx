@@ -115,13 +115,16 @@ const downloadObject = async (objKey: string) => {
     objKey,
   };
   try {
-    const res1 = await fetch("http://localhost:8000/api/downloadObject", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(downloadObj),
-    });
+    const res1 = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/downloadObject`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(downloadObj),
+      }
+    );
     if (res1.ok) {
       const presigned_get_url = (await res1.json()) as string;
       console.log(presigned_get_url);
@@ -147,13 +150,16 @@ const shareObject = async (objKey: string) => {
   let shortenerBaseUrl = "https://url-shortener-service.p.rapidapi.com/shorten";
 
   try {
-    const res1 = await fetch("http://localhost:8000/api/shareObject", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(shareObj),
-    });
+    const res1 = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/shareObject`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(shareObj),
+      }
+    );
     if (res1.ok) {
       const presigned_get_url = (await res1.json()) as string;
 
@@ -182,9 +188,12 @@ const shareObject = async (objKey: string) => {
 };
 
 const deleteObject = async (objKey: string, docId: string) => {
-  const res = await fetch(`http://localhost:8000/api/deleteObject/${objKey}`, {
-    method: "DELETE",
-  });
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/deleteObject/${objKey}`,
+    {
+      method: "DELETE",
+    }
+  );
   if (res.ok) {
     console.log(await res.text());
 

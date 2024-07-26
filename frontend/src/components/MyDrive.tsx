@@ -54,7 +54,7 @@ const MyDrive = () => {
 
                     try {
                       const response = await fetch(
-                        "http://localhost:8000/api/getMetadata",
+                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/getMetadata`,
                         {
                           method: "POST",
                           headers: {
@@ -159,7 +159,7 @@ const MyDrive = () => {
 
                     try {
                       const response = await fetch(
-                        "http://localhost:8000/api/createFolder",
+                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/createFolder`,
                         {
                           method: "POST",
                           headers: {
