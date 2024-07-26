@@ -8,13 +8,19 @@ services:
     command: --config.file=/etc/prometheus/prometheus.yaml
     volumes:
       - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - prometheus_data:/prometheus
 
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     restart: always
     ports:
-      - '3000:3000'
+      - '3001:3000'
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+volumes:
+  prometheus_data:
+  grafana_data:
