@@ -2,9 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerHub') // Jenkins credentials ID for Docker Hub
-        // KUBE_CONFIG = credentials('kube-config') // Jenkins credentials ID for Kubernetes config
-        GITHUB_TOKEN = credentials('github-token') // Jenkins credentials ID for GitHub token
+        DOCKERHUB_CREDENTIALS = credentials('dockerHub')
+        GITHUB_TOKEN = credentials('github-token')
         GCP_CREDENTIALS = credentials('gcp-service-account')
         KUBECTL = 'kubectl'
         PROJECT_ID = 'elgoog-drive-404315'
@@ -16,7 +15,6 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 script {
-                    // Using GitHub token to authenticate
                     git url: 'https://github.com/Himan-Miku/elgoog-drive.git',
                         branch: 'main',
                         credentialsId: 'github-token'
@@ -29,7 +27,6 @@ pipeline {
                 script {
                     sh "docker images -q --filter 'dangling=true' | xargs --no-run-if-empty docker rmi"
 
-                    // Remove previously built images with specific names
                     def imagesToRemove = ['himanmiku/elgoog-drive-backend:latest', 'himanmiku/elgoog-drive-frontend:latest']
                     for (image in imagesToRemove) {
                         sh "docker images --format '{{.Repository}}:{{.Tag}}' | grep '${image}' | xargs --no-run-if-empty docker rmi"
