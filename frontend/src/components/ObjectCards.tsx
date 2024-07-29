@@ -9,6 +9,8 @@ import { firestoreDb } from "@/lib/utils/firebaseConfig";
 import toast, { Toaster } from "react-hot-toast";
 import { usePathname } from "next/navigation";
 import { IResizeContext, resizeContext } from "@/context/ResizeContext";
+import { useState } from "react";
+import CopyButton from "./CopyButton";
 
 type ObjectCardsProps = {
   data: Array<firestoreData>;
@@ -96,14 +98,7 @@ const shareLinkToast = (url: string) => {
           <p className="text-sm font-semibold text-custom-green">{url}</p>
         </div>
         <div>
-          <button
-            onClick={() => {
-              navigator.clipboard.writeText(url);
-            }}
-            className="btn-sm rounded-md bg-custom-nav hover:bg-custom-green hover:text-custom-backg font-semibold"
-          >
-            Copy
-          </button>
+          <CopyButton url={url} />
         </div>
       </div>
     </div>
