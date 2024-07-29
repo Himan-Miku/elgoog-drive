@@ -147,7 +147,7 @@ const shareObject = async (objKey: string) => {
   let shareObj = {
     objKey,
   };
-  let shortenerBaseUrl = "https://url-shortener-service.p.rapidapi.com/shorten";
+  let shortenerBaseUrl = "https://api.linkbird.io/api/v1/links";
 
   try {
     const res1 = await fetch(
@@ -166,19 +166,18 @@ const shareObject = async (objKey: string) => {
       const options = {
         method: "POST",
         headers: {
-          "content-type": "application/x-www-form-urlencoded",
-          "X-RapidAPI-Key": process.env.NEXT_PUBLIC_URL_SHORTNER_KEY!,
-          "X-RapidAPI-Host": "url-shortener-service.p.rapidapi.com",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_URL_SHORTNER_KEY}`,
         },
-        body: new URLSearchParams({
-          url: `${presigned_get_url}`,
+        body: JSON.stringify({
+          longUrl: presigned_get_url,
         }),
       };
 
       const response = await fetch(shortenerBaseUrl, options);
       const shortenUrl = await response.json();
 
-      shareLinkToast(shortenUrl.result_url);
+      shareLinkToast(shortenUrl.shortUrl);
     } else {
       console.log(res1.statusText);
     }
