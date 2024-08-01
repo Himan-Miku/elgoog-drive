@@ -54,7 +54,7 @@ const Navbar = () => {
 
   return (
     <div className="flex justify-between w-full items-center py-3 md:px-14 px-2 h-full">
-      <div className="flex gap-3 md:w-[35rem] w-60 bg-custom-backg rounded-3xl px-3 py-1">
+      <div className="flex gap-3 md:w-[35rem] w-72 bg-custom-backg rounded-3xl px-3 py-1">
         <>
           <div
             onClick={() => {

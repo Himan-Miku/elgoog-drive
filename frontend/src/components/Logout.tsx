@@ -16,8 +16,8 @@ const Logout = ({ image }: LogoutProps) => {
         <Image
           src={image}
           alt={`Avatar`}
-          height={isMobile ? 36 : 40}
-          width={isMobile ? 36 : 40}
+          height={isMobile ? 32 : 40}
+          width={isMobile ? 32 : 40}
           className="rounded-full cursor-pointer"
         />
       </label>
